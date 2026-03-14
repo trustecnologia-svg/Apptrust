@@ -1,0 +1,83 @@
+.admin-users-container {
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.users-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.users-table th,
+.users-table td {
+    padding: 16px;
+    text-align: left;
+    border-bottom: 1px solid #edf2f7;
+}
+
+.users-table th {
+    background: #f7fafc;
+    font-weight: 700;
+    color: #4a5568;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+}
+
+.role-select {
+    padding: 6px 10px;
+    border-radius: 6px;
+    border: 1px solid #cbd5e0;
+    background: white;
+    color: #2d3748;
+}
+
+.btn-approve-user {
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 6px;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-right: 8px;
+}
+
+.btn-approve-user:hover {
+    background: var(--primary-hover);
+}
+
+.btn-delete-user {
+    background: white;
+    color: var(--primary);
+    border: 2px solid var(--primary);
+    padding: 6px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.btn-delete-user:hover {
+    background: var(--primary);
+    color: white;
+}
+
+.status-badge.aprovado {
+    background: #f0fff4;
+    color: #38a169;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+.status-badge.pendente {
+    background: #fffaf0;
+    color: #dd6b20;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 700;
+}

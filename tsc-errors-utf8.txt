@@ -1,0 +1,8 @@
+﻿src/components/DatabookPDFTemplate.tsx(1,1): error TS6133: 'React' is declared but its value is never read.
+src/pages/PcpAprovaPeritagem.tsx(329,63): error TS2339: Property 'os' does not exist on type 'Peritagem'.
+src/pages/PcpAprovaPeritagem.tsx(329,73): error TS2339: Property 'os' does not exist on type 'Peritagem'.
+src/pages/PcpAprovaPeritagem.tsx(329,101): error TS2339: Property 'os' does not exist on type 'Peritagem'.
+src/pages/PcpAprovaPeritagem.tsx(329,122): error TS2339: Property 'os' does not exist on type 'Peritagem'.
+src/pages/PcpFinalizaProcesso.tsx(2,44): error TS6133: 'Camera' is declared but its value is never read.
+src/pages/PcpFinalizaProcesso.tsx(2,52): error TS6133: 'Video' is declared but its value is never read.
+src/pages/PcpFinalizaProcesso.tsx(2,109): error TS6133: 'ImageIcon' is declared but its value is never read.
