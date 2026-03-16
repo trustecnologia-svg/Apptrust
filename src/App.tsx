@@ -97,7 +97,7 @@ function AppRoutes() {
     cliente: "/meus-relatorios"
   };
 
-  const defaultPath = role ? (rolePaths[role] || "/login") : "/login";
+  const defaultPath = role ? (rolePaths[role] || "/login") : (session ? "/pending-approval" : "/login");
 
   return (
     <Suspense fallback={<LoadingSpinner />}>

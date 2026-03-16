@@ -3,170 +3,183 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: #ffffff;
-    padding: 0.5rem;
-    /* Reduzido */
+    background: var(--bg-main);
+    background-image: 
+        radial-gradient(at 0% 0%, rgba(33, 64, 142, 0.05) 0px, transparent 50%),
+        radial-gradient(at 100% 100%, rgba(227, 27, 35, 0.03) 0px, transparent 50%);
+    padding: 2rem;
     position: relative;
     overflow: hidden;
 }
 
+.login-container::before {
+    content: '';
+    position: absolute;
+    width: 150%;
+    height: 150%;
+    background: url('https://www.transparenttextures.com/patterns/cubes.png');
+    opacity: 0.03;
+    pointer-events: none;
+}
+
 .login-card {
-    background: #ffffff;
+    background: var(--bg-card);
     width: 100%;
-    max-width: 400px;
-    /* Reduzido */
-    padding: 1rem 2rem;
-    /* Mais compacto */
-    box-shadow: none;
+    max-width: 480px;
+    padding: 4rem 3rem;
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-lg);
     z-index: 10;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    backdrop-filter: var(--glass-blur);
+    animation: fadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .login-header {
     text-align: center;
-    margin-bottom: 0.75rem;
-    /* Reduzido pela metade */
+    margin-bottom: 3rem;
 }
 
 .logo-placeholder {
-    margin-bottom: 0.5rem;
-    /* Reduzido */
+    margin-bottom: 1.5rem;
 }
 
 .logo-placeholder img {
-    max-width: 120px;
-    /* Reduzido */
+    max-width: 180px;
 }
 
 .login-header h1 {
-    font-size: 1rem;
-    /* Reduzido */
+    font-size: 1.25rem;
     font-weight: 800;
     color: var(--text-main);
-    letter-spacing: -0.025em;
+    letter-spacing: -0.02em;
     text-transform: uppercase;
-    opacity: 0.9;
+    background: var(--primary-gradient);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 
 .login-form {
     display: flex;
     flex-direction: column;
-    gap: 0.15rem;
-    /* Mais compacto */
+    gap: 0.5rem;
 }
 
 .input-group {
-    margin-bottom: 0.5rem;
-    /* Reduzido */
+    margin-bottom: 1.5rem;
 }
 
 .input-group label {
     display: block;
-    margin-bottom: 0.15rem;
-    font-size: 0.75rem;
+    margin-bottom: 8px;
+    font-size: 0.85rem;
     font-weight: 700;
-    color: #4b5563;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
 }
 
 .input-group input {
     width: 100%;
-    padding: 0.5rem 0.875rem;
-    /* Mais fino */
-    background-color: #f3f4f6;
-    border: 1px solid #e5e7eb;
-    border-radius: 8px;
-    font-size: 0.875rem;
+    padding: 14px 20px;
+    background-color: #f8fafc;
+    border: 2px solid #edf2f7;
+    border-radius: 12px;
+    font-size: 1rem;
+    transition: var(--transition);
+}
+
+.input-group input:focus {
+    background-color: #ffffff;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 4px rgba(33, 64, 142, 0.08);
 }
 
 .btn-primary {
-    background-color: #1e3a8a;
-    color: white;
-    padding: 0.65rem;
-    /* Mais fino */
-    border: none;
-    border-radius: 8px;
-    font-size: 0.9rem;
-    font-weight: 700;
-    cursor: pointer;
-    margin-top: 0.25rem;
+    width: 100%;
+    margin-top: 1rem;
 }
 
 .login-error {
     background-color: #fef2f2;
-    color: #991b1b;
-    padding: 0.5rem;
-    border-radius: 8px;
-    margin-bottom: 0.75rem;
-    font-size: 0.75rem;
+    color: var(--danger);
+    padding: 12px;
+    border-radius: 12px;
+    margin-bottom: 1.5rem;
+    font-size: 0.875rem;
     text-align: center;
     border: 1px solid #fee2e2;
+    font-weight: 600;
 }
 
 .login-footer {
-    margin-top: 1rem;
-    /* Reduzido */
+    margin-top: 2.5rem;
     text-align: center;
     display: flex;
     flex-direction: column;
-    gap: 0.25rem;
-    /* Mais compacto */
+    gap: 1rem;
 }
 
 .forgot-link {
     color: var(--text-muted);
-    font-size: 0.75rem;
-    font-weight: 500;
-    text-decoration: none;
+    font-size: 0.875rem;
+    font-weight: 600;
+    transition: var(--transition);
+}
+
+.forgot-link:hover {
+    color: var(--primary);
 }
 
 .no-account {
-    font-size: 0.75rem;
+    font-size: 0.9rem;
     color: var(--text-secondary);
-    margin-bottom: 0.25rem;
+    font-weight: 500;
 }
 
 .create-account {
     color: var(--primary);
-    font-weight: 700;
+    font-weight: 800;
     text-decoration: none;
 }
 
+.create-account:hover {
+    text-decoration: underline;
+}
+
 .dev-signature {
-    margin-top: 1rem;
-    /* Reduzido */
-    padding-top: 0.75rem;
-    border-top: 1px solid #f3f4f6;
-    color: #94a3b8;
-    font-size: 0.7rem;
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid #f1f5f9;
+    color: var(--text-muted);
+    font-size: 0.8rem;
 }
 
 .dev-signature p {
     margin: 0;
-    font-weight: 500;
+    font-weight: 600;
 }
 
 .dev-signature strong {
-    color: #64748b;
+    color: var(--text-secondary);
 }
 
 .dev-signature small {
     display: block;
-    font-size: 0.6rem;
-    margin-top: 1px;
+    font-size: 0.75rem;
+    margin-top: 4px;
     opacity: 0.8;
 }
 
 @media (max-width: 500px) {
     .login-container {
-        padding: 0;
+        padding: 1rem;
     }
 
     .login-card {
-        padding: 1.5rem 1.25rem;
-        height: auto;
-        min-height: 100vh;
-        border-radius: 0;
+        padding: 3rem 1.5rem;
     }
 }

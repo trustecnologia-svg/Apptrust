@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Search, FileText, Download, Loader2, Calendar } from 'lucide-react';
+import { Search, FileText, Download, Loader2 } from 'lucide-react';
 import { pdf } from '@react-pdf/renderer';
 import { UsiminasReportTemplate } from '../components/UsiminasReportTemplate';
 import { ReportTemplate } from '../components/ReportTemplate';
@@ -250,26 +250,31 @@ export const Relatorios: React.FC = () => {
     );
 
     return (
-        <div className="relatorios-container">
-            <h1 className="page-title">Central de Relatórios PDF</h1>
+        <div className="ind-container">
+            <div className="ind-page-header">
+                <div className="ind-title-group">
+                    <h1>Central de Relatórios</h1>
+                    <p>Emissão de laudos de peritagem e documentos técnicos em PDF</p>
+                </div>
+            </div>
 
             <div className="search-bar">
                 <div className="search-input-wrapper">
                     <Search size={20} color="#718096" />
                     <input
                         type="text"
-                        placeholder="Buscar OS por cliente ou número..."
+                        placeholder="Filtrar por ativação, cliente ou número de OS..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
                 </div>
             </div>
 
-            <div className="report-list">
+            <div className="ind-grid">
                 {loading ? (
-                    <div className="loading-state">
+                    <div className="loading-state" style={{ gridColumn: '1 / -1', padding: '3rem', textAlign: 'center' }}>
                         <Loader2 className="animate-spin" size={40} color="#3182ce" />
-                        <p>Carregando...</p>
+                        <p style={{ marginTop: '1rem', color: '#64748b', fontWeight: 600 }}>Localizando arquivos técnicos...</p>
                     </div>
                 ) : (
                     filteredPeritagens.map(p => {
@@ -284,52 +289,59 @@ export const Relatorios: React.FC = () => {
                         const displayStatus = (status: string) => {
                             const s = status.toUpperCase();
                             if (s.includes('AGUARDANDO APROVAÇÃO') || s.includes('AGUARDANDO PEDIDO') || s.includes('ORÇAMENTO ENVIADO') || s.includes('AGUARDANDO CLIENTE')) {
-                                return 'AGUARDANDO PEDIDO DE COMPRA';
+                                return 'AGUARDANDO PEDIDO';
                             }
                             return status;
                         };
 
                         return (
-                            <div key={p.id} className="report-card">
-                                <div className="report-header">
-                                    <div>
-                                        <span className="report-id-badge">{p.os_interna || 'SEM O.S'}</span>
-                                        <span className="report-ref">O.S. Cliente: {(p.os && (!p.os.startsWith('S/OS-') || p.os.length < 15)) ? p.os : (p.numero_peritagem && (!p.numero_peritagem.startsWith('S/OS-') || p.numero_peritagem.length < 15) ? p.numero_peritagem : 'NÃO INFORMADA')}</span>
-                                    </div>
-                                    <span className={`status-pill ${getStatusColorClass(p.status)}`}>
+                            <div key={p.id} className="ind-card">
+                                <div className="ind-card-tag">
+                                    <span className="os-label">ID: {p.os_interna || 'P-TAG-00'}</span>
+                                    <span className={`ind-badge ${getStatusColorClass(p.status)}`} style={{fontSize: '0.6rem'}}>
                                         {displayStatus(p.status)}
                                     </span>
                                 </div>
 
-                                <div className="report-body">
-                                    <h3 className="report-client">{p.cliente}</h3>
-                                    <div className="report-row">
-                                        <Calendar size={16} />
-                                        <span>{new Date(p.data_execucao).toLocaleDateString('pt-BR')}</span>
+                                <div className="ind-card-body">
+                                    <div className="client-header">
+                                        <h3 className="ind-card-title">{p.cliente}</h3>
+                                        <span className="ind-card-subtitle">Peritagem realizada em {new Date(p.data_execucao).toLocaleDateString('pt-BR')}</span>
                                     </div>
-                                    <div className="report-row">
-                                        <FileText size={16} />
-                                        <span>Relatórios Disponíveis</span>
+                                    
+                                    <div className="ind-data-mini-grid" style={{ marginBottom: 0 }}>
+                                        <div className="ind-data-item">
+                                            <span className="ind-data-label">Área / Linha</span>
+                                            <span className="ind-data-value">{p.area || '-'}/{p.linha || '-'}</span>
+                                        </div>
+                                        <div className="ind-data-item">
+                                            <span className="ind-data-label">O.S. Cliente</span>
+                                            <span className="ind-data-value" style={{fontFamily: 'monospace'}}>
+                                                {(p.os && (!p.os.startsWith('S/OS-') || p.os.length < 15)) ? p.os : (p.numero_peritagem && (!p.numero_peritagem.startsWith('S/OS-') || p.numero_peritagem.length < 15) ? p.numero_peritagem : 'N/A')}
+                                            </span>
+                                        </div>
                                     </div>
                                 </div>
 
-                                <div className="report-actions">
+                                <div className="ind-card-footer">
                                     <button
-                                        className="btn-report btn-report-outline"
+                                        className="ind-btn ind-btn-secondary"
+                                        style={{ flex: 1 }}
                                         onClick={() => handleDownloadPdf(p, 'peritagem')}
                                         disabled={generatingPdf && selectedId === p.id}
                                     >
-                                        {generatingPdf && selectedId === p.id ? <Loader2 size={16} className="animate-spin" /> : <FileText size={16} />}
-                                        <span>PDF Peritagem</span>
+                                        {generatingPdf && selectedId === p.id ? <Loader2 size={18} className="animate-spin" /> : <FileText size={18} />}
+                                        <span>Peritagem</span>
                                     </button>
 
                                     <button
-                                        className="btn-report btn-report-primary"
+                                        className="ind-btn ind-btn-primary"
+                                        style={{ flex: 1 }}
                                         onClick={() => handleDownloadPdf(p, 'laudo')}
                                         disabled={generatingPdf && selectedId === p.id}
                                     >
-                                        {generatingPdf && selectedId === p.id ? <Loader2 size={16} className="animate-spin" /> : <Download size={16} />}
-                                        <span>{generatingPdf && selectedId === p.id ? 'Gerando...' : 'PDF Cliente'}</span>
+                                        {generatingPdf && selectedId === p.id ? <Loader2 size={18} className="animate-spin" /> : <Download size={18} />}
+                                        <span>{generatingPdf && selectedId === p.id ? 'Gerando...' : 'Laudo Final'}</span>
                                     </button>
                                 </div>
                             </div>
@@ -337,7 +349,7 @@ export const Relatorios: React.FC = () => {
                     })
                 )}
                 {!loading && filteredPeritagens.length === 0 && (
-                    <p style={{ textAlign: 'center', color: '#718096' }}>Nenhuma peritagem encontrada.</p>
+                    <div style={{ textAlign: 'center', color: '#718096', gridColumn: '1 / -1', padding: '3rem' }}>Nenhum laudo disponível para os filtros aplicados.</div>
                 )}
             </div>
 

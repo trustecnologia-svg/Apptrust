@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Search, Plus, ExternalLink, Loader2, Trash2, Calendar, AlertCircle } from 'lucide-react';
+import { Search, Plus, ExternalLink, Loader2, Trash2, Calendar } from 'lucide-react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
@@ -157,12 +157,15 @@ export const Peritagens: React.FC = () => {
     return (
         <div className="peritagens-container">
             <div className="header-actions">
-                <h1 className="page-title">
-                    {role === 'perito'
-                        ? (filterStatus === 'recusadas' ? 'Peritagens Recusadas' : 'Minhas Peritagens')
-                        : 'Todas as Peritagens'}
-                </h1>
-                <button className="btn-primary" style={{ width: 'auto' }} onClick={() => navigate('/nova-peritagem')}>
+                <div className="title-section">
+                    <h1 className="page-title">
+                        {role === 'perito'
+                            ? (filterStatus === 'recusadas' ? 'Revisões Pendentes' : 'Controle de Peritagens')
+                            : 'Gestão de Ativos'}
+                    </h1>
+                    <p>{role === 'perito' ? 'Seus laudos e verificações técnicas' : 'Painel administrativo de vistorias industriais'}</p>
+                </div>
+                <button className="btn-primary" onClick={() => navigate('/nova-peritagem')}>
                     <Plus size={20} />
                     <span>Nova Peritagem</span>
                 </button>
@@ -204,49 +207,52 @@ export const Peritagens: React.FC = () => {
                             };
 
                             return (
-                                <div key={p.id} className={`peritagem-card ${isRejection ? 'revisao-border' : ''}`}>
-                                    <div className="card-header">
-                                        <div>
-                                            <span className="os-badge">{p.os_interna || 'SEM O.S'}</span>
-                                            <span className="ref-text">O.S. Cliente: {(p.os && (!p.os.startsWith('S/OS-') || p.os.length < 15)) ? p.os : (p.numero_peritagem && (!p.numero_peritagem.startsWith('S/OS-') || p.numero_peritagem.length < 15) ? p.numero_peritagem : 'NÃO INFORMADA')}</span>
-                                        </div>
+                                <div key={p.id} className="peritagem-card">
+                                    <div className="card-top-tag">
+                                        <span className="os-label">ID: {p.os_interna || 'P-TAG-00'}</span>
                                         <span className={`status-pill ${getStatusColorClass(p.status)}`}>
                                             {p.status}
                                         </span>
                                     </div>
 
-                                    <div className="card-body">
-                                        <h3 className="client-name">{p.cliente}</h3>
-
-                                        <div className="info-row">
-                                            <Calendar size={16} />
-                                            <span>{new Date(p.data_execucao).toLocaleDateString('pt-BR')}</span>
+                                    <div className="card-main-body">
+                                        <div className="client-header">
+                                            <h3 className="client-name">{p.cliente}</h3>
+                                            <span className="client-sub">Setor Técnico / Ativo Hidráulico</span>
                                         </div>
 
-                                        <div className="info-row">
-                                            <AlertCircle size={16} />
-                                            <span className={`priority-badge ${(p.prioridade || '').toLowerCase() === 'urgente' ? 'priority-urgente' : 'priority-normal'}`}>
-                                                Prioridade: {p.prioridade || 'Normal'}
-                                            </span>
+                                        <div className="technical-details">
+                                            <div className="detail-item">
+                                                <span className="detail-label">Execução</span>
+                                                <span className="detail-value">
+                                                    <Calendar size={14} />
+                                                    {new Date(p.data_execucao).toLocaleDateString('pt-BR')}
+                                                </span>
+                                            </div>
+                                            <div className="detail-item">
+                                                <span className="detail-label">Prioridade</span>
+                                                <span className={`detail-value ${(p.prioridade || '').toLowerCase() === 'urgente' ? 'ind-badge-danger' : 'ind-badge-info'}`} style={{fontSize: '0.7rem', padding: '2px 6px', borderRadius: '4px'}}>
+                                                    {p.prioridade || 'Normal'}
+                                                </span>
+                                            </div>
+                                            <div className="detail-item" style={{ gridColumn: 'span 2', marginTop: '8px' }}>
+                                                <span className="detail-label">O.S. Cliente</span>
+                                                <span className="detail-value" style={{fontFamily: 'monospace'}}>
+                                                    {(p.os && (!p.os.startsWith('S/OS-') || p.os.length < 15)) ? p.os : (p.numero_peritagem && (!p.numero_peritagem.startsWith('S/OS-') || p.numero_peritagem.length < 15) ? p.numero_peritagem : 'N/A')}
+                                                </span>
+                                            </div>
                                         </div>
+
                                         {isRejection && p.motivo_rejeicao && (
-                                            <div style={{
-                                                marginTop: '12px',
-                                                padding: '10px',
-                                                background: '#fef2f2',
-                                                borderLeft: '4px solid #ef4444',
-                                                borderRadius: '4px',
-                                                fontSize: '0.8rem',
-                                                color: '#991b1b'
-                                            }}>
-                                                <strong>Motivo da Reprovação:</strong> {p.motivo_rejeicao}
+                                            <div className="ind-badge-danger" style={{ width: '100%', padding: '12px', borderRadius: '12px', fontSize: '0.75rem', marginBottom: '16px' }}>
+                                                <strong>REPROVADO PCP:</strong> {p.motivo_rejeicao}
                                             </div>
                                         )}
                                     </div>
 
-                                    <div className="card-actions">
+                                    <div className="card-actions-dock">
                                         <button
-                                            className={`btn-main-action ${canEdit ? 'btn-main-edit' : 'btn-main-view'}`}
+                                            className={`btn-ind ${canEdit ? 'btn-ind-primary' : 'btn-ind-outline'}`}
                                             onClick={() => {
                                                 if (canEdit) {
                                                     navigate(`/nova-peritagem?id=${p.id}`);
@@ -255,15 +261,14 @@ export const Peritagens: React.FC = () => {
                                                 }
                                             }}
                                         >
-                                            {canEdit ? (isRejection ? 'CORRIGIR' : 'EDITAR') : 'VER DETALHES'}
                                             <ExternalLink size={16} />
+                                            {canEdit ? (isRejection ? 'REVISAR' : 'GERENCIAR') : 'VISUALIZAR'}
                                         </button>
 
                                         {role === 'gestor' && (
                                             <button
-                                                className="btn-main-action btn-main-danger"
+                                                className="btn-ind btn-ind-outline btn-ind-danger"
                                                 onClick={() => handleDelete(p.id)}
-                                                style={{ flex: '0 0 45px' }}
                                             >
                                                 <Trash2 size={18} />
                                             </button>

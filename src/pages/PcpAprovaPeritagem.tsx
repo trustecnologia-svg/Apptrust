@@ -169,15 +169,20 @@ export const PcpAprovaPeritagem: React.FC = () => {
     });
 
     return (
-        <div className="peritagens-container">
-            <h1 className="page-title">1. Aprovação de Peritagem</h1>
+        <div className="ind-container">
+            <div className="ind-page-header">
+                <div className="ind-title-group">
+                    <h1>Aprovação de Peritagem</h1>
+                    <p>Revisão técnica e liberação de laudos para o comercial</p>
+                </div>
+            </div>
 
             <div className="search-bar">
                 <div className="search-input-wrapper">
                     <Search size={20} color="#718096" />
                     <input
                         type="text"
-                        placeholder="Buscar por cliente ou ID..."
+                        placeholder="Buscar por cliente, ID ou O.S..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
@@ -317,44 +322,37 @@ export const PcpAprovaPeritagem: React.FC = () => {
                     </div>
                 </div>
             ) : (
-                <div className="pcp-approval-grid">
+                <div className="ind-grid">
                     {filtered.length > 0 ? (
                         filtered.map(p => (
-                            <div key={p.id} className="pcp-action-card" onClick={() => setSelectedPeritagem(p)}>
-                                <div className="pcp-card-header">
-                                    <div>
-                                        <span className="report-id-badge" style={{ background: '#eff6ff', color: '#2563eb', padding: '4px 10px', borderRadius: '6px', fontSize: '0.75rem', fontWeight: '800' }}>
-                                            {p.os_interna || 'SEM O.S'}
-                                        </span>
-                                        <span style={{ display: 'block', fontSize: '0.7rem', color: '#94a3b8', fontWeight: '600' }}>
-                                            O.S. Cliente: {(p.os && (!p.os.startsWith('S/OS-') || p.os.length < 15)) ? p.os : (p.numero_peritagem && (!p.numero_peritagem.startsWith('S/OS-') || p.numero_peritagem.length < 15) ? p.numero_peritagem : 'NÃO INFORMADA')}
-                                        </span>
-                                    </div>
-                                    <span className="status-pill status-aprovacao" style={{ padding: '5px 10px', borderRadius: '9999px', fontSize: '0.65rem', fontWeight: '800', textTransform: 'uppercase', background: '#e0f2fe', color: '#0369a1' }}>
+                            <div key={p.id} className="ind-card" onClick={() => setSelectedPeritagem(p)} style={{ cursor: 'pointer' }}>
+                                <div className="ind-card-tag">
+                                    <span className="os-label">{p.os_interna || 'P-TAG-00'}</span>
+                                    <span className="ind-badge ind-badge-info" style={{fontSize: '0.6rem'}}>
                                         {p.status}
                                     </span>
                                 </div>
 
-                                <div className="pcp-body">
-                                    <h3 className="pcp-card-client" style={{ fontSize: '1.1rem', fontWeight: '800', color: '#1e293b', marginBottom: '12px' }}>
-                                        {p.cliente}
-                                    </h3>
+                                <div className="ind-card-body">
+                                    <h3 className="ind-card-title">{p.cliente}</h3>
+                                    <span className="ind-card-subtitle">Entrada em {new Date(p.created_at || '').toLocaleDateString('pt-BR')}</span>
 
-                                    <div className="pcp-details-mini-grid" style={{ marginBottom: '1.5rem', background: '#f8fafc', padding: '12px', borderRadius: '12px', border: '1px solid #f1f5f9' }}>
-                                        <div className="pcp-detail-item">
-                                            <small style={{ color: '#94a3b8', fontSize: '0.6rem', fontWeight: '800', textTransform: 'uppercase' }}>Cilindro</small>
-                                            <strong style={{ display: 'block', fontSize: '0.8rem' }}>{p.camisa_int || '---'}/{p.haste_diam || '---'}</strong>
+                                    <div className="ind-data-mini-grid" style={{ marginBottom: 0 }}>
+                                        <div className="ind-data-item">
+                                            <span className="ind-data-label">Cilindro Ø</span>
+                                            <span className="ind-data-value">{p.camisa_int || '---'}/{p.haste_diam || '---'}</span>
                                         </div>
-                                        <div className="pcp-detail-item">
-                                            <small style={{ color: '#94a3b8', fontSize: '0.6rem', fontWeight: '800', textTransform: 'uppercase' }}>Curso</small>
-                                            <strong style={{ display: 'block', fontSize: '0.8rem' }}>{p.curso || '---'} mm</strong>
+                                        <div className="ind-data-item">
+                                            <span className="ind-data-label">Curso</span>
+                                            <span className="ind-data-value">{p.curso || '---'} mm</span>
                                         </div>
                                     </div>
                                 </div>
 
-                                <div className="pcp-footer">
-                                    <button className="btn-pcp-action">
-                                        <Search size={18} /> Detalhes da Peritagem
+                                <div className="ind-card-footer">
+                                    <button className="ind-btn ind-btn-primary" style={{ width: '100%' }}>
+                                        <Search size={18} />
+                                        <span>Revisar Laudo</span>
                                     </button>
                                 </div>
                             </div>

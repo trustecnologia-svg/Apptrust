@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 import {
-    Clock,
     CheckCircle2,
     Camera,
     Video,
@@ -77,7 +76,6 @@ export const WorkflowPage: React.FC = () => {
                 if (file.type.startsWith('image/')) {
                     processedData = await compressImage(file, 1280, 1280, 0.8);
                 } else if (file.type.startsWith('video/')) {
-                    // Para vídeo, convertemos para base64 diretamente (limite 50MB no Supabase/Profiles geralmente)
                     processedData = await new Promise((resolve) => {
                         const reader = new FileReader();
                         reader.readAsDataURL(file);
@@ -94,7 +92,7 @@ export const WorkflowPage: React.FC = () => {
             } else if (type === 'teste') {
                 updateData.fotos_videos_teste = [...(selectedPeritagem.fotos_videos_teste || []), ...newUrls];
             } else if (type === 'pintura') {
-                updateData.foto_pintura_final = newUrls[0]; // Só uma foto final
+                updateData.foto_pintura_final = newUrls[0];
             }
 
             const { error } = await supabase
@@ -104,7 +102,6 @@ export const WorkflowPage: React.FC = () => {
 
             if (error) throw error;
 
-            // Sincronizar com o Arquivo Geral
             const syncItems: SyncPhoto[] = newUrls.map((data, idx) => ({
                 data,
                 description: `Foto Workflow (${type}) - ${new Date().toLocaleString()}`,
@@ -117,7 +114,6 @@ export const WorkflowPage: React.FC = () => {
                 syncItems
             );
 
-            // Atualiza estado local
             setSelectedPeritagem({ ...selectedPeritagem, ...updateData });
             fetchPeritagens();
             alert('Arquivos enviados com sucesso!');
@@ -223,20 +219,18 @@ export const WorkflowPage: React.FC = () => {
             p.os_interna.toLowerCase().includes(searchTerm.toLowerCase());
         if (!matchesSearch) return false;
 
-        // Qualidade só vê peritagens na etapa 'teste'
         if (role === 'qualidade') return p.etapa_atual === 'teste';
-        // Montagem só vê peritagens nas etapas 'peritagem' ou 'montagem'
         if (role === 'montagem') return ['peritagem', 'montagem'].includes(p.etapa_atual);
 
         return true;
     });
 
     return (
-        <div className="peritagens-container">
-            <header className="page-header" style={{ marginBottom: '2rem' }}>
-                <div>
-                    <h1 className="page-title">Fluxo de QR code</h1>
-                    <p className="subtitle">Gerencie as etapas de montagem, testes e pintura</p>
+        <div className="ind-container">
+            <header className="ind-page-header">
+                <div className="ind-title-group">
+                    <h1>Fluxo de Produção</h1>
+                    <p>Controle de montagem, testes de qualidade e acabamento</p>
                 </div>
             </header>
 
@@ -254,23 +248,26 @@ export const WorkflowPage: React.FC = () => {
                         </div>
                     </div>
 
-                    <div className="pcp-approval-grid">
+                    <div className="ind-grid">
                         {loading ? (
-                            <div className="loading-state"><Loader2 className="animate-spin" /></div>
+                            <div className="loading-state" style={{ gridColumn: '1 / -1', padding: '3rem', textAlign: 'center' }}>
+                                <Loader2 className="animate-spin" size={40} color="#2563eb" />
+                                <p style={{ marginTop: '1rem', color: '#64748b', fontWeight: 600 }}>Sincronizando fluxo industrial...</p>
+                            </div>
                         ) : (
                             filtered.map(p => (
-                                <div key={p.id} className="pcp-action-card workflow-card" onClick={() => setSelectedPeritagem(p)}>
-                                    <div className="pcp-card-header">
-                                        <span className="os-badge">{p.os_interna}</span>
-                                        <div className={`stage-pill ${p.etapa_atual}`}>
+                                <div key={p.id} className="ind-card" onClick={() => setSelectedPeritagem(p)} style={{ cursor: 'pointer' }}>
+                                    <div className="ind-card-tag">
+                                        <span className="os-label">{p.os_interna}</span>
+                                        <span className={`ind-badge ${p.etapa_atual === 'peritagem' ? 'ind-badge-warning' : (p.etapa_atual === 'finalizado' ? 'ind-badge-success' : 'ind-badge-info')}`}>
                                             {p.etapa_atual.toUpperCase()}
-                                        </div>
+                                        </span>
                                     </div>
-                                    <div className="pcp-body">
-                                        <h3 className="client-name">{p.cliente}</h3>
-                                        <p className="tag-info">TAG: {p.tag}</p>
+                                    <div className="ind-card-body">
+                                        <h3 className="ind-card-title">{p.cliente}</h3>
+                                        <span className="ind-card-subtitle">Ativo Hidráulico • TAG: {p.tag}</span>
 
-                                        <div className="workflow-progress">
+                                        <div className="workflow-progress" style={{ marginTop: '2rem' }}>
                                             <div className={`step ${p.etapa_atual === 'peritagem' ? 'active' : 'completed'}`}>1</div>
                                             <div className="line"></div>
                                             <div className={`step ${p.etapa_atual === 'montagem' ? 'active' : (['teste', 'pintura', 'finalizado'].includes(p.etapa_atual) ? 'completed' : '')}`}>2</div>
@@ -280,8 +277,8 @@ export const WorkflowPage: React.FC = () => {
                                             <div className={`step ${p.etapa_atual === 'pintura' ? 'active' : (p.etapa_atual === 'finalizado' ? 'completed' : '')}`}>4</div>
                                         </div>
                                     </div>
-                                    <div className="pcp-footer">
-                                        <button className="btn-manage-workflow">
+                                    <div className="ind-card-footer">
+                                        <button className="ind-btn ind-btn-secondary" style={{ width: '100%' }}>
                                             Gerenciar Etapa <ChevronRight size={16} />
                                         </button>
                                     </div>
@@ -292,28 +289,27 @@ export const WorkflowPage: React.FC = () => {
                 </>
             ) : (
                 <div className="workflow-detail-view slide-in">
-                    <button className="btn-back-workflow" onClick={() => setSelectedPeritagem(null)}>
+                    <button className="ind-btn ind-btn-secondary" onClick={() => setSelectedPeritagem(null)} style={{ marginBottom: '2rem' }}>
                         <ArrowRight style={{ transform: 'rotate(180deg)' }} /> Voltar para Lista
                     </button>
 
-                    <div className="workflow-header-detail">
-                        <div className="peritagem-info-main">
-                            <h2>{selectedPeritagem.os_interna}</h2>
-                            <p>{selectedPeritagem.cliente} • TAG: {selectedPeritagem.tag}</p>
+                    <div className="workflow-header-detail" style={{ background: 'white', padding: '24px', borderRadius: '20px', border: '1px solid #e2e8f0', marginBottom: '2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <div>
+                            <h2 style={{ fontSize: '1.75rem', fontWeight: 900, color: '#0f172a' }}>{selectedPeritagem.os_interna}</h2>
+                            <p style={{ color: '#64748b', fontWeight: 600 }}>{selectedPeritagem.cliente} • TAG: {selectedPeritagem.tag}</p>
                         </div>
-                        <div className="current-stage-display">
-                            <Clock size={20} />
-                            <span>Etapa Atual: <strong>{selectedPeritagem.etapa_atual.toUpperCase()}</strong></span>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                            <span className={`ind-badge ind-badge-info`}>{selectedPeritagem.etapa_atual.toUpperCase()}</span>
                             {role === 'gestor' && (
-                                <button className="btn-regress" onClick={regressStage} title="Voltar para Etapa Anterior" style={{ marginLeft: '15px', background: '#fef2f2', color: '#991b1b', border: '1px solid #fecaca', padding: '4px 8px', borderRadius: '6px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '5px' }}>
-                                    <RotateCcw size={14} /> Voltar Etapa
+                                <button className="ind-btn ind-btn-secondary" onClick={regressStage} style={{ padding: '8px 12px' }}>
+                                    <RotateCcw size={16} />
                                 </button>
                             )}
                         </div>
                     </div>
 
                     <div className="workflow-steps-content">
-                        {/* Passo 1: Peritagem (Início do Fluxo de Produção) */}
+                        {/* Passo 1: Peritagem */}
                         {role !== 'qualidade' && (
                             <div className={`workflow-step-section ${selectedPeritagem.etapa_atual === 'peritagem' ? 'active' : 'completed'}`}>
                                 <div className="step-header">
@@ -326,7 +322,7 @@ export const WorkflowPage: React.FC = () => {
                                         <div className="step-description">
                                             <p>A peritagem inicial foi concluída e aprovada. Agora você pode iniciar o processo de montagem e recuperação do equipamento.</p>
                                         </div>
-                                        <button className="btn-next-stage" onClick={advanceStage} disabled={uploading}>
+                                        <button className="ind-btn ind-btn-primary" onClick={advanceStage} disabled={uploading} style={{ width: '100%' }}>
                                             Iniciar Montagem e Recuperação <ChevronRight size={18} />
                                         </button>
                                     </div>
@@ -368,19 +364,19 @@ export const WorkflowPage: React.FC = () => {
                                             ))}
                                         </div>
                                         <button
-                                            className="btn-next-stage"
+                                            className="ind-btn ind-btn-primary"
+                                            style={{ width: '100%', marginTop: '2rem' }}
                                             onClick={advanceStage}
                                             disabled={uploading || !selectedPeritagem.fotos_montagem || selectedPeritagem.fotos_montagem.length === 0}
-                                            title={(!selectedPeritagem.fotos_montagem || selectedPeritagem.fotos_montagem.length === 0) ? 'Adicione pelo menos uma foto para prosseguir' : ''}
                                         >
-                                            Concluir Montagem e Ir para Testes <ArrowRight size={18} />
+                                            Concluir Montagem e Ir para Testes <ChevronRight size={18} />
                                         </button>
                                     </div>
                                 )}
                             </div>
                         )}
 
-                        {/* Passo 3: Testes - visível para qualidade, gestor, pcp */}
+                        {/* Passo 3: Testes */}
                         {role !== 'montagem' && (
                             <div className={`workflow-step-section ${selectedPeritagem.etapa_atual === 'teste' ? 'active' : ''}`}>
                                 <div className="step-header">
@@ -419,19 +415,19 @@ export const WorkflowPage: React.FC = () => {
                                             ))}
                                         </div>
                                         <button
-                                            className="btn-next-stage"
+                                            className="ind-btn ind-btn-primary"
+                                            style={{ width: '100%', marginTop: '2rem' }}
                                             onClick={advanceStage}
                                             disabled={uploading || !selectedPeritagem.fotos_videos_teste || selectedPeritagem.fotos_videos_teste.length === 0}
-                                            title={(!selectedPeritagem.fotos_videos_teste || selectedPeritagem.fotos_videos_teste.length === 0) ? 'Adicione pelo menos uma foto ou vídeo para prosseguir' : ''}
                                         >
-                                            Concluir Testes e Ir para Pintura <ArrowRight size={18} />
+                                            Concluir Testes e Ir para Pintura <ChevronRight size={18} />
                                         </button>
                                     </div>
                                 )}
                             </div>
                         )}
 
-                        {/* Passo 4: Pintura - não visível para qualidade nem montagem */}
+                        {/* Passo 4: Pintura */}
                         {role !== 'qualidade' && role !== 'montagem' && (
                             <div className={`workflow-step-section ${selectedPeritagem.etapa_atual === 'pintura' ? 'active' : ''}`}>
                                 <div className="step-header">
@@ -453,10 +449,10 @@ export const WorkflowPage: React.FC = () => {
                                             />
                                             <label htmlFor="upload-pintura" className="btn-upload-label">
                                                 {uploading ? <Loader2 className="animate-spin" /> : <Camera />}
-                                                {selectedPeritagem.foto_pintura_final ? 'Trocar Foto Final' : 'Foto da Pintura Final'}
+                                                {selectedPeritagem?.foto_pintura_final ? 'Trocar Foto Final' : 'Foto da Pintura Final'}
                                             </label>
                                         </div>
-                                        {selectedPeritagem.foto_pintura_final && (
+                                        {selectedPeritagem?.foto_pintura_final && (
                                             <div className="preview-grid-mini">
                                                 <div className="preview-thumb-container">
                                                     <img src={selectedPeritagem.foto_pintura_final} alt="Pintura Final" />
@@ -464,7 +460,12 @@ export const WorkflowPage: React.FC = () => {
                                                 </div>
                                             </div>
                                         )}
-                                        <button className="btn-finalize-workflow" onClick={advanceStage} disabled={uploading || !selectedPeritagem.foto_pintura_final}>
+                                        <button
+                                            className="ind-btn ind-btn-primary"
+                                            style={{ width: '100%', marginTop: '2rem', background: '#059669' }}
+                                            onClick={advanceStage}
+                                            disabled={uploading || !selectedPeritagem?.foto_pintura_final}
+                                        >
                                             FINALIZAR PROCESSO E GERAR DATABOOK <CheckCircle2 size={18} />
                                         </button>
                                     </div>
@@ -476,212 +477,145 @@ export const WorkflowPage: React.FC = () => {
             )}
 
             <style>{`
-                .workflow-card {
-                    cursor: pointer;
-                    transition: transform 0.2s, box-shadow 0.2s;
-                    border: 1px solid #e2e8f0;
-                }
-                .workflow-card:hover {
-                    transform: translateY(-4px);
-                    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-                }
-                .os-badge {
-                    background: #f1f5f9;
-                    color: #475569;
-                    padding: 4px 8px;
-                    border-radius: 4px;
-                    font-size: 0.75rem;
-                    font-weight: 700;
-                }
-                .stage-pill {
-                    padding: 4px 10px;
-                    border-radius: 999px;
-                    font-size: 0.65rem;
-                    font-weight: 800;
-                    background: #e0f2fe;
-                    color: #0369a1;
-                }
-                .stage-pill.peritagem { background: #fef3c7; color: #92400e; }
-                .stage-pill.montagem { background: #dcfce7; color: #166534; }
-                .stage-pill.teste { background: #fee2e2; color: #991b1b; }
-                .stage-pill.pintura { background: #f3e8ff; color: #6b21a8; }
-
                 .workflow-progress {
                     display: flex;
                     align-items: center;
                     gap: 8px;
-                    margin-top: 1rem;
                 }
                 .step {
-                    width: 20px;
-                    height: 20px;
+                    width: 24px;
+                    height: 24px;
                     border-radius: 50%;
                     background: #cbd5e1;
                     color: white;
                     display: flex;
                     align-items: center;
                     justify-content: center;
-                    font-size: 0.6rem;
-                    font-weight: bold;
+                    font-size: 0.7rem;
+                    font-weight: 900;
+                    flex-shrink: 0;
                 }
-                .step.active { background: #2563eb; }
-                .step.completed { background: #22c55e; }
-                .line { flex: 1; height: 2px; background: #e2e8f0; }
+                .step.active { background: #21408e; box-shadow: 0 0 10px rgba(33, 64, 142, 0.3); }
+                .step.completed { background: #059669; }
+                .line { flex: 1; height: 3px; background: #f1f5f9; border-radius: 2px; }
 
                 .workflow-step-section {
                     background: white;
                     border: 1px solid #e2e8f0;
-                    border-radius: 12px;
-                    padding: 1.5rem;
-                    margin-bottom: 1rem;
-                    opacity: 0.6;
+                    border-radius: 20px;
+                    padding: 2rem;
+                    margin-bottom: 1.5rem;
+                    opacity: 0.5;
+                    transition: all 0.3s ease;
                 }
                 .workflow-step-section.active {
                     opacity: 1;
-                    border: 2px solid #2563eb;
-                    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+                    border-color: #21408e;
+                    box-shadow: 0 15px 30px -10px rgba(0, 0, 0, 0.05);
+                }
+                .workflow-step-section.completed {
+                    opacity: 0.8;
+                    border-color: #d1fae5;
+                    background: #f0fdf4;
                 }
                 .step-header {
                     display: flex;
                     align-items: center;
-                    gap: 12px;
-                    margin-bottom: 1rem;
+                    gap: 16px;
+                    margin-bottom: 1.5rem;
+                }
+                .step-header h3 {
+                    font-size: 1.15rem;
+                    font-weight: 800;
+                    color: #0f172a;
+                    margin: 0;
                 }
                 .step-number {
-                    width: 32px;
-                    height: 32px;
-                    border-radius: 50%;
+                    width: 40px;
+                    height: 40px;
+                    border-radius: 12px;
                     background: #1e293b;
                     color: white;
                     display: flex;
                     align-items: center;
                     justify-content: center;
-                    font-weight: 800;
+                    font-weight: 900;
+                    font-size: 1.1rem;
                 }
-                .upload-zone { margin: 1.5rem 0; }
                 .upload-zone input { display: none; }
                 .btn-upload-label {
                     display: flex;
                     align-items: center;
                     justify-content: center;
-                    gap: 10px;
-                    padding: 1rem;
-                    border: 2px dashed #cbd5e1;
-                    border-radius: 8px;
+                    gap: 12px;
+                    padding: 2rem;
+                    border: 2px dashed #e2e8f0;
+                    border-radius: 16px;
                     cursor: pointer;
                     color: #64748b;
-                    font-weight: 600;
+                    font-weight: 700;
+                    transition: all 0.2s;
+                }
+                .btn-upload-label:hover {
+                    border-color: #21408e;
+                    background: #f8fafc;
+                    color: #21408e;
                 }
                 .preview-grid-mini {
                     display: flex;
-                    gap: 10px;
+                    gap: 12px;
                     overflow-x: auto;
-                    padding-bottom: 1rem;
+                    padding: 1rem 0;
                 }
-                .preview-grid-mini img {
-                    width: 80px;
-                    height: 80px;
+                .preview-thumb-container {
+                    position: relative;
+                    flex-shrink: 0;
+                }
+                .preview-thumb-container img {
+                    width: 100px;
+                    height: 100px;
                     object-fit: cover;
-                    border-radius: 6px;
+                    border-radius: 12px;
+                    border: 1px solid #e2e8f0;
                 }
                 .video-thumb {
-                    width: 80px;
-                    height: 80px;
-                    background: #000;
-                    border-radius: 6px;
+                    width: 100px;
+                    height: 100px;
+                    background: #0f172a;
+                    border-radius: 12px;
                     display: flex;
                     align-items: center;
                     justify-content: center;
                 }
-                .preview-thumb-container {
-                    position: relative;
-                }
                 .btn-delete-file {
                     position: absolute;
-                    top: -5px;
-                    right: -5px;
+                    top: -6px;
+                    right: -6px;
                     background: #ef4444;
                     color: white;
                     border: none;
                     border-radius: 50%;
-                    width: 22px;
-                    height: 22px;
+                    width: 24px;
+                    height: 24px;
                     display: flex;
                     align-items: center;
                     justify-content: center;
                     cursor: pointer;
-                    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-                }
-                .btn-next-stage, .btn-finalize-workflow {
-                    width: 100%;
-                    margin-top: 2rem;
-                    padding: 1rem;
-                    border: none;
-                    border-radius: 8px;
-                    font-weight: 800;
-                    text-transform: uppercase;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    gap: 10px;
-                    cursor: pointer;
-                    transition: all 0.2s;
-                }
-                .btn-next-stage {
-                    background: #2563eb;
-                    color: white;
-                }
-                .btn-next-stage:hover {
-                    background: #1d4ed8;
-                    transform: translateY(-2px);
-                }
-                .btn-next-stage:disabled {
-                    background: #e2e8f0;
-                    color: #94a3b8;
-                    cursor: not-allowed;
-                    transform: none;
-                }
-                .btn-finalize-workflow {
-                    background: #059669;
-                    color: white;
-                }
-                .btn-finalize-workflow:hover {
-                    background: #047857;
-                    transform: translateY(-2px);
-                }
-                .btn-finalize-workflow:disabled {
-                    background: #e2e8f0;
-                    color: #94a3b8;
-                    cursor: not-allowed;
-                    transform: none;
-                }
-                .btn-back-workflow {
-                    background: none;
-                    border: none;
-                    color: #64748b;
-                    font-weight: 700;
-                    display: flex;
-                    align-items: center;
-                    gap: 5px;
-                    margin-bottom: 2rem;
-                    cursor: pointer;
+                    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+                    z-index: 10;
                 }
                 .step-description {
                     background: #f8fafc;
-                    padding: 1rem;
-                    border-radius: 8px;
-                    border-left: 4px solid #2563eb;
-                    margin-bottom: 1.5rem;
-                }
-                .step-description p {
-                    font-size: 0.9rem;
-                    color: #475569;
-                    line-height: 1.5;
+                    padding: 1.25rem;
+                    border-radius: 12px;
+                    border-left: 4px solid #21408e;
+                    margin-bottom: 2rem;
                 }
                 .action-hint {
                     font-size: 0.85rem;
                     color: #64748b;
-                    margin-bottom: 1rem;
+                    font-weight: 600;
+                    margin-bottom: 1.5rem;
                 }
             `}</style>
         </div>

@@ -12,17 +12,25 @@ import {
     Legend,
     ArcElement,
     PointElement,
-    LineElement
+    LineElement,
+    RadialLinearScale,
+    Filler
 } from 'chart.js';
-import { Bar, Doughnut, Line } from 'react-chartjs-2';
+import { Doughnut, Line, Bar } from 'react-chartjs-2';
 import {
     FileText,
-    DollarSign,
     Wrench,
     CheckCircle2,
-    Timer,
-    ArrowRight,
-    Clock
+    Clock,
+    PlusCircle,
+    Activity,
+    ShieldCheck,
+    ClipboardCheck,
+    Truck,
+    Factory,
+    BarChart3,
+    ArrowUpRight,
+    Users
 } from 'lucide-react';
 import './Dashboard.css';
 
@@ -35,35 +43,33 @@ ChartJS.register(
     Legend,
     ArcElement,
     PointElement,
-    LineElement
+    LineElement,
+    RadialLinearScale,
+    Filler
 );
-
-
 
 export const Dashboard: React.FC = () => {
     const navigate = useNavigate();
-    const { isAdmin, user, role } = useAuth();
+    const { user, role } = useAuth();
 
     const [counts, setCounts] = useState({
         total: 0,
-        aguardando: 0,
-        manutencao: 0,
-        finalizados: 0,
+        aguardandoPeritagem: 0,
+        emPeritagem: 0,
         pendentePcp: 0,
         aguardandoCliente: 0,
+        manutencao: 0,
         conferenciaFinal: 0,
-        avgLeadTime: 0,
-        aguardandoPeritagem: 0
+        finalizados: 0,
+        avgLeadTime: 0
     });
     const [clientStats, setClientStats] = useState<{ name: string; count: number }[]>([]);
     const [monthlyAvgData, setMonthlyAvgData] = useState<{ month: string; avg: number }[]>([]);
     const [loading, setLoading] = useState(true);
     const [empresaId, setEmpresaId] = useState<string | null>(null);
-    const [clienteNome, setClienteNome] = useState<string>('');
 
     useEffect(() => {
         if (user && role) {
-            console.log('🔄 Dashboard: Role detectada:', role);
             if (role === 'cliente') {
                 fetchUserEmpresa();
             } else {
@@ -82,13 +88,11 @@ export const Dashboard: React.FC = () => {
         try {
             const { data, error } = await supabase
                 .from('profiles')
-                .select('empresa_id, empresas(nome)')
+                .select('empresa_id')
                 .eq('id', user.id)
                 .single();
             if (error) throw error;
             setEmpresaId(data?.empresa_id || null);
-            // @ts-ignore
-            setClienteNome(data?.empresas?.nome || '');
         } catch (err) {
             console.error('Erro ao buscar empresa do usuário:', err);
             setLoading(false);
@@ -97,28 +101,14 @@ export const Dashboard: React.FC = () => {
 
     const fetchCounts = async () => {
         if (!role) return;
-
         try {
             setLoading(true);
-            console.log('📊 Dashboard: Iniciando busca de dados para role:', role);
-
-            // Selecionar apenas colunas necessárias para contagem e dashboard (evita carregar fotos pesadas)
             let query = supabase.from('peritagens').select('status, created_at, data_execucao, data_finalizacao, cliente, empresa_id');
 
-            if (role === 'cliente') {
-                if (empresaId) {
-                    query = query.eq('empresa_id', empresaId);
-                } else {
-                    console.log('⚠️ Dashboard: Cliente sem empresa_id mapeado.');
-                    setCounts({ total: 0, aguardando: 0, manutencao: 0, finalizados: 0, pendentePcp: 0, aguardandoCliente: 0, conferenciaFinal: 0, avgLeadTime: 0, aguardandoPeritagem: 0 });
-                    setClientStats([]);
-                    setMonthlyAvgData([]);
-                    setLoading(false);
-                    return;
-                }
+            if (role === 'cliente' && empresaId) {
+                query = query.eq('empresa_id', empresaId);
             }
 
-            // 2. Buscar contagem de Aguardando Peritagem (Tabela separada)
             let countAguardandoPeritagem = 0;
             if (role !== 'cliente') {
                 const { count } = await supabase
@@ -129,34 +119,23 @@ export const Dashboard: React.FC = () => {
             }
 
             const { data, error } = await query;
-
-            if (error) {
-                console.error('❌ Erro na consulta do Dashboard:', error);
-                throw error;
-            }
+            if (error) throw error;
 
             if (data) {
-                console.log(`✅ Dashboard: ${data.length} peritagens encontradas.`);
                 const total = data.length;
-
-                // Normalizar status para facilitar o filtro
                 const normalizedData = data.map((p: any) => ({
                     ...p,
                     status: (p.status || "").toUpperCase().trim()
                 }));
 
-                const pendentePcp = normalizedData.filter((p: any) => p.status === 'AGUARDANDO APROVAÇÃO DO PCP' || p.status === 'PERITAGEM CRIADA' || p.status === 'PERITAGEM FINALIZADA').length;
-                const aguardandoCliente = normalizedData.filter((p: any) => p.status === 'AGUARDANDO APROVAÇÃO DO CLIENTE' || p.status === 'AGUARDANDO CLIENTES' || p.status === 'AGUARDANDO ORÇAMENTO' || p.status === 'ORÇAMENTO ENVIADO').length;
+                const emPeritagem = normalizedData.filter((p: any) => p.status === 'PERITAGEM CRIADA' || p.status === 'EM PERITAGEM').length;
+                const pendentePcp = normalizedData.filter((p: any) => p.status === 'AGUARDANDO APROVAÇÃO DO PCP' || p.status === 'PERITAGEM FINALIZADA').length;
+                const aguardandoCliente = normalizedData.filter((p: any) => p.status === 'AGUARDANDO APROVAÇÃO DO CLIENTE' || p.status === 'AGUARDANDO ORÇAMENTO' || p.status === 'ORÇAMENTO ENVIADO').length;
                 const manutencao = normalizedData.filter((p: any) => p.status === 'EM MANUTENÇÃO' || p.status === 'CILINDROS EM MANUTENÇÃO' || p.status === 'OS EM ABERTO').length;
                 const conferenciaFinal = normalizedData.filter((p: any) => p.status === 'AGUARDANDO CONFERÊNCIA FINAL').length;
 
                 const finishedItems = normalizedData.filter((p: any) =>
-                    p.status === 'PROCESSO FINALIZADO' ||
-                    p.status === 'FINALIZADO' ||
-                    p.status === 'FINALIZADOS' ||
-                    p.status === 'PROCESSO CONCLUÍDO' ||
-                    p.status === 'CONCLUÍDO' ||
-                    p.status === 'ORÇAMENTO FINALIZADO'
+                    ['PROCESSO FINALIZADO', 'FINALIZADO', 'FINALIZADOS', 'PROCESSO CONCLUÍDO', 'CONCLUÍDO', 'ORÇAMENTO FINALIZADO'].includes(p.status)
                 );
                 const finalizados = finishedItems.length;
 
@@ -165,42 +144,28 @@ export const Dashboard: React.FC = () => {
                 const monthGroups: { [key: string]: { total: number, count: number } } = {};
 
                 finishedItems.forEach((item: any) => {
-                    // Como não temos updated_at, usamos data_execucao se disponível, senão usamos created_at (o que dará lead time 0 mas evita erro)
                     if (item.created_at) {
                         const start = new Date(item.created_at);
-                        // Usar data_finalizacao se disponível, senão data_execucao, senão created_at
                         const end = item.data_finalizacao ? new Date(item.data_finalizacao) :
                             (item.data_execucao ? new Date(item.data_execucao) : new Date(item.created_at));
 
                         const diffTime = Math.abs(end.getTime() - start.getTime());
                         const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
                         totalDays += diffDays;
                         validItems++;
 
                         const monthKey = end.toLocaleDateString('pt-BR', { month: '2-digit', year: 'numeric' });
-                        if (!monthGroups[monthKey]) {
-                            monthGroups[monthKey] = { total: 0, count: 0 };
-                        }
+                        if (!monthGroups[monthKey]) monthGroups[monthKey] = { total: 0, count: 0 };
                         monthGroups[monthKey].total += diffDays;
                         monthGroups[monthKey].count += 1;
                     }
                 });
 
                 const avgLeadTime = validItems > 0 ? Math.round(totalDays / validItems) : 0;
-
-                const sortedMonths = Object.keys(monthGroups).sort((a, b) => {
-                    const [ma, ya] = a.split('/').map(Number);
-                    const [mb, yb] = b.split('/').map(Number);
-                    return new Date(ya, ma - 1).getTime() - new Date(yb, mb - 1).getTime();
-                }).map(month => ({
+                const sortedMonths = Object.keys(monthGroups).sort().map(month => ({
                     month,
                     avg: Math.round(monthGroups[month].total / monthGroups[month].count)
                 }));
-
-                setMonthlyAvgData(sortedMonths);
-                setMonthlyAvgData(sortedMonths);
-                setCounts({ total, aguardando: aguardandoCliente, manutencao, finalizados, pendentePcp, aguardandoCliente, conferenciaFinal, avgLeadTime, aguardandoPeritagem: countAguardandoPeritagem });
 
                 const clientCounts: { [key: string]: number } = {};
                 normalizedData.forEach((p: any) => {
@@ -212,425 +177,176 @@ export const Dashboard: React.FC = () => {
                     .map(([name, count]) => ({ name, count }))
                     .sort((a, b) => b.count - a.count);
 
+                setMonthlyAvgData(sortedMonths);
+                setCounts({ 
+                    total, 
+                    aguardandoPeritagem: countAguardandoPeritagem, 
+                    emPeritagem,
+                    pendentePcp, 
+                    aguardandoCliente, 
+                    manutencao, 
+                    conferenciaFinal, 
+                    finalizados, 
+                    avgLeadTime 
+                });
                 setClientStats(sortedClients);
-            } else {
-                console.log('⚠️ Dashboard: Nenhum dado retornado da consulta.');
             }
         } catch (err) {
-            console.error('💥 Erro ao buscar estatísticas do Dashboard:', err);
+            console.error('Erro ao buscar estatísticas:', err);
         } finally {
             setLoading(false);
         }
     };
 
     const stats = [
-        {
-            label: 'Aguardando Peritagem',
-            value: counts.aguardandoPeritagem,
-            icon: <Clock size={24} />,
-            color: 'linear-gradient(135deg, #21408e 0%, #3b82f6 100%)',
-            iconColor: '#ffffff',
-            link: '/pcp/aguardando',
-            show: isAdmin && role !== 'cliente'
-        },
-        {
-            label: '1. Aprovação de Peritagem',
-            value: counts.pendentePcp,
-            icon: <FileText size={24} />,
-            color: 'rgba(59, 130, 246, 0.15)',
-            iconColor: '#3b82f6',
-            link: '/pcp/aprovar',
-            show: isAdmin && role !== 'cliente' && ['gestor', 'pcp'].includes(role || '')
-        },
-        {
-            label: '2. Liberação do Pedido',
-            value: counts.aguardandoCliente,
-            icon: <DollarSign size={24} />,
-            color: 'rgba(245, 158, 11, 0.15)',
-            iconColor: '#f59e0b',
-            link: '/pcp/liberar',
-            show: isAdmin && role !== 'cliente' && ['gestor', 'pcp'].includes(role || '')
-        },
-        {
-            label: '3. Cilindros em Manutenção',
-            value: counts.manutencao,
-            icon: <Wrench size={24} />,
-            color: 'rgba(16, 185, 129, 0.15)',
-            iconColor: '#10b981',
-            link: '/manutencao',
-            show: isAdmin && role !== 'cliente'
-        },
-        {
-            label: '4. Conferência Final',
-            value: counts.conferenciaFinal,
-            icon: <CheckCircle2 size={24} />,
-            color: 'rgba(15, 17, 42, 0.1)',
-            iconColor: '#0f172a',
-            link: '/pcp/finalizar',
-            show: isAdmin && role !== 'cliente' && ['gestor', 'pcp'].includes(role || '')
-        },
-        {
-            label: 'Finalizados',
-            value: counts.finalizados,
-            icon: <CheckCircle2 size={24} />,
-            color: 'rgba(16, 185, 129, 0.15)',
-            iconColor: '#10b981',
-            link: role === 'cliente' ? '/meus-relatorios?status=finalizados' : '/peritagens?status=finalizados',
-            show: true
-        },
-        {
-            label: 'Tempo Médio (Dias)',
-            value: counts.avgLeadTime,
-            icon: <Timer size={24} />,
-            color: 'rgba(99, 102, 241, 0.15)',
-            iconColor: '#6366f1',
-            link: '#',
-            show: true
-        },
+        { label: 'Recebimento', subLabel: 'Portaria / Inbound', value: counts.aguardandoPeritagem, icon: <Truck size={22} />, color: '#3b82f6', link: '/pcp/aguardando' },
+        { label: 'Peritagem', subLabel: 'Análise Técnica', value: counts.emPeritagem, icon: <ClipboardCheck size={22} />, color: '#8b5cf6', link: '/peritagens?status=peritagem' },
+        { label: 'Orçamento', subLabel: 'Aprovação Cliente', value: counts.aguardandoCliente, icon: <FileText size={22} />, color: '#f59e0b', link: '/pcp/liberar' },
+        { label: 'Workshop', subLabel: 'Em Manutenção', value: counts.manutencao, icon: <Wrench size={22} />, color: '#10b981', link: '/manutencao' },
+        { label: 'Logística', subLabel: 'Pronto p/ Entrega', value: counts.finalizados, icon: <CheckCircle2 size={22} />, color: '#059669', link: '/peritagens?status=finalizados' },
     ];
 
-    const centerTextPlugin = {
-        id: 'centerText',
-        beforeDraw: (chart: any) => {
-            const { ctx, chartArea: { width, height } } = chart;
-            ctx.save();
-            const total = chart.config.data.datasets[0].data.reduce((a: number, b: number) => a + b, 0);
-
-            ctx.font = '800 2.5rem sans-serif';
-            ctx.textAlign = 'center';
-            ctx.fillStyle = '#334155';
-            ctx.fillText(total.toString(), width / 2, height / 2 + 10);
-
-            ctx.font = 'bold 0.7rem sans-serif';
-            ctx.fillStyle = '#94a3b8';
-            ctx.fillText('TOTAL PERITAGENS', width / 2, height / 2 + 35);
-            ctx.restore();
-        }
-    };
-
-    const valueAtEndPlugin = {
-        id: 'valueAtEnd',
-        afterDatasetsDraw: (chart: any) => {
-            const { ctx } = chart;
-            const isHorizontal = chart.config.options.indexAxis === 'y';
-
-            chart.data.datasets.forEach((dataset: any, i: number) => {
-                const meta = chart.getDatasetMeta(i);
-                meta.data.forEach((bar: any, index: number) => {
-                    const value = dataset.data[index];
-                    if (value === 0) return;
-
-                    ctx.save();
-                    ctx.fillStyle = '#64748b';
-                    ctx.font = 'bold 11px sans-serif';
-
-                    if (isHorizontal) {
-                        ctx.textAlign = 'left';
-                        ctx.textBaseline = 'middle';
-                        ctx.fillText(value, bar.x + 8, bar.y);
-                    } else {
-                        ctx.textAlign = 'center';
-                        ctx.textBaseline = 'bottom';
-                        ctx.fillText(value, bar.x, bar.y - 5);
-                    }
-                    ctx.restore();
-                });
-            });
-        }
-    };
-
-    const barData = {
-        labels: clientStats.length > 0 ? clientStats.map(s => s.name) : ['Sem dados'],
-        datasets: [
-            {
-                label: 'Peritagens',
-                data: clientStats.length > 0 ? clientStats.map(s => s.count) : [0],
-                backgroundColor: (context: any) => {
-                    const ctx = context.chart.ctx;
-                    const gradient = ctx.createLinearGradient(0, 0, 400, 0);
-                    gradient.addColorStop(0, '#3b82f6');
-                    gradient.addColorStop(1, '#60a5fa');
-                    return gradient;
-                },
-                borderRadius: 6,
-                borderWidth: 0,
-                barPercentage: 0.7,
-                categoryPercentage: 0.8,
-            },
-        ],
-    };
-
-    const doughnutData = {
-        labels: ['Finalizados', 'PCP Aprovação', 'Liberação Pedido', 'Oficina', 'Conferência'],
-        datasets: [
-            {
-                data: [counts.finalizados, counts.pendentePcp, counts.aguardandoCliente, counts.manutencao, counts.conferenciaFinal],
-                backgroundColor: [
-                    '#059669',
-                    '#2563eb',
-                    '#d97706',
-                    '#db2777',
-                    '#1e293b'
-                ],
-                borderWidth: 2,
-                borderColor: '#ffffff',
-                hoverOffset: 10,
-                spacing: 2,
-                borderRadius: 2
-            },
-        ],
-    };
-
-    const lineData = {
-        labels: monthlyAvgData.length > 0 ? monthlyAvgData.map(d => d.month) : ['Sem dados'],
-        datasets: [
-            {
-                label: 'Tempo Médio (Dias)',
-                data: monthlyAvgData.length > 0 ? monthlyAvgData.map(d => d.avg) : [0],
-                borderColor: '#6366f1',
-                backgroundColor: 'rgba(99, 102, 241, 0.2)',
-                tension: 0.4,
-                fill: true,
-                pointStyle: 'circle',
-                pointRadius: 4,
-                pointHoverRadius: 6
-            }
-        ]
-    };
-
-    const barOptions = {
-        indexAxis: 'y' as const,
-        responsive: true,
-        maintainAspectRatio: false,
-        layout: {
-            padding: {
-                right: 40,
-                bottom: 10,
-                top: 10
-            }
-        },
-        plugins: {
-            legend: { display: false },
-            tooltip: {
-                backgroundColor: '#1e293b',
-                titleColor: '#ffffff',
-                bodyColor: '#cbd5e1',
-                padding: 12,
-                cornerRadius: 8,
-                displayColors: false,
-                titleFont: { size: 13, weight: 'bold' as any },
-                bodyFont: { size: 13 }
-            }
-        },
-        scales: {
-            x: {
-                beginAtZero: true,
-                grid: {
-                    display: true,
-                    color: '#f1f5f9',
-                    drawTicks: false
-                },
-                ticks: {
-                    stepSize: 5,
-                    maxTicksLimit: 12,
-                    font: { size: 10, weight: 'bold' as any },
-                    color: '#64748b'
-                },
-                border: { display: false }
-            },
-            y: {
-                grid: { display: false },
-                ticks: {
-                    font: { size: 10, weight: '600' as any },
-                    color: '#475569',
-                    autoSkip: false
-                },
-                border: { display: false }
-            }
-        },
-        animation: {
-            duration: 800,
-            easing: 'easeOutQuart' as any
-        }
-    };
-
-    const doughnutOptions = {
-        responsive: true,
-        maintainAspectRatio: false,
-        cutout: '72%',
-        plugins: {
-            legend: {
-                position: 'right' as any,
-                labels: {
-                    usePointStyle: true,
-                    pointStyle: 'rectRounded',
-                    padding: 15,
-                    font: {
-                        size: 11,
-                        weight: '600' as any
-                    },
-                    color: '#475569'
-                }
-            },
-            tooltip: {
-                backgroundColor: '#1e293b',
-                padding: 12,
-                cornerRadius: 8,
-                titleFont: { weight: 'bold' as any }
-            }
-        },
-        animation: {
-            animateRotate: true,
-            animateScale: false,
-            duration: 1000
-        }
-    };
-
-    const lineOptions = {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-            legend: { display: false },
-            tooltip: {
-                backgroundColor: '#1e293b',
-                padding: 12,
-                cornerRadius: 8,
-                titleFont: { weight: 'bold' as any }
-            }
-        },
-        scales: {
-            y: {
-                beginAtZero: true,
-                grid: { color: '#f1f5f9' },
-                ticks: { color: '#64748b' }
-            },
-            x: {
-                grid: { display: false },
-                ticks: { color: '#475569' }
-            }
-        }
-    };
-
     return (
-        <div className="dashboard-container" id="dashboard-page">
-            <header className="dashboard-hero">
-                <h1>{role === 'cliente' ? (clienteNome ? `Olá, ${clienteNome}` : 'Olá, Bem-vindo!') : 'Painel de Controle'}</h1>
-                <p>
-                    {role === 'cliente'
-                        ? 'Acompanhe em tempo real o status das suas manutenções e o histórico de relatórios técnicos.'
-                        : 'Gerenciamento centralizado de peritagens, orçamentos e fluxo de oficina.'}
-                </p>
+        <div className="dashboard-container industrial-theme" id="dashboard-page">
+            <header className="dashboard-header-v4">
+                <div className="header-main">
+                    <div className="brand-pill">OPERATIONS HUB</div>
+                    <h1>Painel de Controle de Peritagem</h1>
+                    <p>Trust Tecnologia - Monitoramento Inteligente de Manutenção Industrial</p>
+                </div>
+                <div className="header-actions">
+                    <button className="btn-new-peritagem" onClick={() => navigate('/nova-peritagem')}>
+                        <PlusCircle size={20} />
+                        Nova Peritagem
+                    </button>
+                </div>
             </header>
 
             {loading ? (
-                <div style={{ padding: '80px', textAlign: 'center', background: 'white', borderRadius: '16px', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)' }}>
-                    <div className="loader" style={{ margin: '0 auto 16px' }}></div>
-                    <p style={{ color: '#64748b', fontWeight: 600 }}>Sincronizando estatísticas...</p>
+                <div className="industrial-loading-screen">
+                    <div className="loading-orbit"></div>
+                    <p>CARREGANDO FLUXO OPERACIONAL...</p>
                 </div>
             ) : (
-                <>
-                    <div className="stats-grid">
-                        {stats.filter(s => s.show).map((stat, index) => (
-                            <div
-                                key={index}
-                                className="stat-card clickable"
-                                onClick={() => stat.link !== '#' && navigate(stat.link)}
-                            >
-                                <div className="stat-content">
-                                    <div className="stat-icon-wrapper" style={{ background: stat.color, color: stat.iconColor }}>
-                                        {stat.icon}
+                <div className="dashboard-content-v4">
+                    <section className="pipeline-container">
+                        <div className="pipeline-header">
+                            <Activity size={18} />
+                            <h3>Fluxo de Trabalho em Tempo Real</h3>
+                        </div>
+                        <div className="pipeline-steps">
+                            {stats.map((s, i) => (
+                                <div key={i} className="pipeline-card" onClick={() => navigate(s.link)}>
+                                    <div className="card-top">
+                                        <div className="icon-box" style={{ background: `${s.color}15`, color: s.color }}>
+                                            {s.icon}
+                                        </div>
+                                        <span className="step-count">{s.value}</span>
                                     </div>
-                                    <div className="stat-info">
-                                        <span className="stat-label">{stat.label}</span>
-                                        <span className="stat-value">{stat.value}</span>
+                                    <div className="card-bottom">
+                                        <span className="step-label">{s.label}</span>
+                                        <span className="step-sub">{s.subLabel}</span>
                                     </div>
+                                    <div className="card-progress">
+                                        <div className="progress-fill" style={{ width: `${Math.min(100, (s.value / (counts.total || 1)) * 100)}%`, background: s.color }}></div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </section>
+
+                    <div className="secondary-grid-v4">
+                        <div className="data-card-v4 ranking">
+                            <div className="card-header-v4">
+                                <Users size={18} />
+                                <h3>Principais Clientes (Volume)</h3>
+                            </div>
+                            <div className="ranking-body">
+                                {clientStats.slice(0, 5).map((c, i) => (
+                                    <div key={i} className="ranking-row">
+                                        <div className="client-name">
+                                            <span className="row-num">{i + 1}</span>
+                                            {c.name}
+                                        </div>
+                                        <span className="row-val">{c.count}</span>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        <div className="data-card-v4 analytics">
+                            <div className="card-header-v4">
+                                <BarChart3 size={18} />
+                                <h3>Tempo Médio de Ciclo (Lead Time)</h3>
+                            </div>
+                            <div className="analytics-body">
+                                <div className="lead-time-display">
+                                    <span className="lt-val">{counts.avgLeadTime}</span>
+                                    <span className="lt-unit">DIAS</span>
+                                </div>
+                                <div className="lt-chart-placeholder">
+                                    <Line 
+                                        data={{
+                                            labels: monthlyAvgData.map(d => d.month),
+                                            datasets: [{
+                                                data: monthlyAvgData.map(d => d.avg),
+                                                borderColor: '#21408e',
+                                                backgroundColor: 'rgba(33, 64, 142, 0.05)',
+                                                tension: 0.4,
+                                                fill: true,
+                                                pointRadius: 4,
+                                                pointBackgroundColor: '#21408e'
+                                            }]
+                                        }}
+                                        options={{ maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { display: false }, y: { display: false } } }}
+                                    />
                                 </div>
                             </div>
-                        ))}
-                    </div>
+                        </div>
 
-                    <div className="charts-grid">
-                        {role !== 'cliente' ? (
-                            <>
-                                <div className="chart-card">
-                                    <h3>Volume de Peritagens por Cliente</h3>
-                                    <div className="chart-wrapper" style={{ height: `${Math.max(400, clientStats.length * 45)}px` }}>
-                                        <Bar
-                                            data={barData}
-                                            options={barOptions}
-                                            plugins={[valueAtEndPlugin]}
-                                        />
-                                    </div>
-                                </div>
-                                <div className="chart-card">
-                                    <h3>Tempo Médio de Liberação (Mensal)</h3>
-                                    <div style={{ height: '300px' }}>
-                                        <Line data={lineData} options={lineOptions} />
-                                    </div>
-                                </div>
-                            </>
-                        ) : (
-                            <div className="chart-card">
-                                <h3>Resumo de Processos</h3>
-                                <div style={{ minHeight: '300px', display: 'flex', flexDirection: 'column', gap: '24px' }}>
-                                    <div style={{ display: 'flex', justifyContent: 'space-between', padding: '16px', background: '#f8fafc', borderRadius: '12px' }}>
-                                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                                            <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#059669' }}></div>
-                                            <span style={{ fontWeight: 600, color: '#475569' }}>Finalizados</span>
-                                        </div>
-                                        <span style={{ fontWeight: 800, color: '#0f172a' }}>{counts.finalizados}</span>
-                                    </div>
-                                    <div style={{ display: 'flex', justifyContent: 'space-between', padding: '16px', background: '#f8fafc', borderRadius: '12px' }}>
-                                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                                            <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#d97706' }}></div>
-                                            <span style={{ fontWeight: 600, color: '#475569' }}>Em Andamento</span>
-                                        </div>
-                                        <span style={{ fontWeight: 800, color: '#0f172a' }}>{counts.manutencao + counts.aguardandoCliente}</span>
-                                    </div>
-                                    <div style={{ display: 'flex', justifyContent: 'space-between', padding: '16px', background: '#f8fafc', borderRadius: '12px' }}>
-                                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                                            <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#2563eb' }}></div>
-                                            <span style={{ fontWeight: 600, color: '#475569' }}>Pendente Aprovação</span>
-                                        </div>
-                                        <span style={{ fontWeight: 800, color: '#0f172a' }}>{counts.pendentePcp}</span>
-                                    </div>
-                                </div>
+                        <div className="data-card-v4 summary">
+                            <div className="card-header-v4">
+                                <ShieldCheck size={18} />
+                                <h3>Resumo Operacional</h3>
                             </div>
-                        )}
-
-                        <div className="chart-card">
-                            <h3>Distribuição de Status</h3>
-                            <div style={{ height: '300px' }}>
-                                <Doughnut
-                                    data={doughnutData}
-                                    options={doughnutOptions}
-                                    plugins={[centerTextPlugin]}
-                                />
+                            <div className="summary-body">
+                                <div className="summary-item">
+                                    <span>Eficiência Global</span>
+                                    <strong>{Math.round((counts.finalizados / (counts.total || 1)) * 100)}%</strong>
+                                </div>
+                                <div className="summary-item">
+                                    <span>Total de Ordens</span>
+                                    <strong>{counts.total}</strong>
+                                </div>
+                                <div className="summary-item">
+                                    <span>Em Manutenção</span>
+                                    <strong>{counts.manutencao}</strong>
+                                </div>
+                                <div className="summary-progress-bar">
+                                    <div className="progress-done" style={{ width: `${(counts.finalizados / (counts.total || 1)) * 100}%` }}></div>
+                                </div>
                             </div>
                         </div>
                     </div>
 
-                    {role === 'cliente' && (
-                        <div className="action-grid">
-                            <div className="action-card" onClick={() => navigate('/meus-relatorios')}>
-                                <div>
-                                    <h4>Meus Relatórios</h4>
-                                    <p>Acesse o histórico completo de laudos técnicos.</p>
-                                </div>
-                                <ArrowRight size={24} color="#3b82f6" />
+                    <footer className="dashboard-footer-v4">
+                        <div className="footer-links">
+                            <div className="f-link" onClick={() => navigate('/peritagens')}>
+                                <FileText size={16} />
+                                Peritagens Ativas
                             </div>
-                            <div className="action-card" onClick={() => navigate('/databook')}>
-                                <div>
-                                    <h4>Data Books</h4>
-                                    <p>Visualize certificados e documentação técnica.</p>
-                                </div>
-                                <ArrowRight size={24} color="#10b981" />
+                            <div className="f-link" onClick={() => navigate('/pcp/finalizar')}>
+                                <ClipboardCheck size={16} />
+                                Controle de Qualidade
                             </div>
                         </div>
-                    )}
-                </>
+                        <div className="system-status">
+                            <div className="status-indicator"></div>
+                            CONEXÃO ESTÁVEL - BANCO DE DADOS SINCRONIZADO
+                        </div>
+                    </footer>
+                </div>
             )}
         </div>
     );
 };
-

@@ -69,17 +69,25 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 console.error('❌ Error fetching role:', error);
             }
 
+            const isSuperAdmin = userEmail === 'matheus.stanley12@gmail.com';
+
             if (data) {
                 console.log('✅ Role loaded:', data.role, 'Status:', data.status);
                 setRole(data.role as UserRole);
-
-                const isSuperAdmin = userEmail === 'matheus.stanley12@gmail.com';
                 setStatus(isSuperAdmin ? 'APROVADO' : (data.status || 'PENDENTE'));
             } else {
                 console.warn('⚠️ No role data found for user');
+                if (isSuperAdmin) {
+                    setRole('gestor');
+                    setStatus('APROVADO');
+                }
             }
         } catch (error) {
             console.error('💥 Exception fetching role:', error);
+            if (userEmail === 'matheus.stanley12@gmail.com') {
+                setRole('gestor');
+                setStatus('APROVADO');
+            }
         } finally {
             setLoading(false);
         }

@@ -1,46 +1,60 @@
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
 
 :root {
-  /* Core Colors - Trust Tecnologia */
+  /* Core Colors - Trust Tecnologia Premium */
   --primary: #21408e;
-  /* Logo Blue */
+  --primary-gradient: linear-gradient(135deg, #21408e 0%, #3b82f6 100%);
   --primary-hover: #19316d;
-  --primary-light: #f0f4ff;
+  --primary-light: rgba(33, 64, 142, 0.05);
+  
   --accent: #e31b23;
-  /* Logo Red */
-  --accent-hover: #c4171d;
-
+  --accent-gradient: linear-gradient(135deg, #e31b23 0%, #ff4d4d 100%);
+  
   /* Neutral Palette */
-  --bg-main: #f1f4f9;
+  --bg-main: #f4f7fa;
   --bg-sidebar: #ffffff;
   --bg-card: #ffffff;
-  --text-main: #1a2e63;
+  --text-main: #0f172a;
   --text-secondary: #475569;
   --text-muted: #94a3b8;
 
   /* Functional Colors */
   --success: #10b981;
   --warning: #f59e0b;
-  --danger: #e31b23;
-  /* Red from logo */
+  --danger: #ef4444;
   --info: #3b82f6;
 
   /* Layout & Spacing */
-  --sidebar-width: 260px;
+  --sidebar-width: 280px;
   --border-radius-sm: 8px;
-  --border-radius: 12px;
-  --border-radius-lg: 24px;
+  --border-radius: 16px;
+  --border-radius-lg: 32px;
 
-  /* High-End Shadows & Glassmorphism */
-  --shadow-sm: 0 2px 4px rgba(33, 64, 142, 0.05);
-  --shadow: 0 10px 15px -3px rgba(33, 64, 142, 0.1), 0 4px 6px -2px rgba(33, 64, 142, 0.05);
-  --shadow-md: 0 20px 25px -5px rgba(33, 64, 142, 0.1), 0 10px 10px -5px rgba(33, 64, 142, 0.04);
-  --shadow-lg: 0 25px 50px -12px rgba(33, 64, 142, 0.25);
+  /* Premium Shadows */
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.1);
+  --shadow: 0 10px 15px -3px rgba(15, 23, 42, 0.05), 0 4px 6px -2px rgba(15, 23, 42, 0.02);
+  --shadow-md: 0 12px 20px -5px rgba(33, 64, 142, 0.1), 0 5px 10px -5px rgba(33, 64, 142, 0.05);
+  --shadow-lg: 0 25px 50px -12px rgba(33, 64, 142, 0.15);
+  
+  /* Industrial Color Tokens */
+  --industrial-blue: #0f172a;
+  --industrial-silver: #f1f5f9;
+  --industrial-border: #e2e8f0;
+  --industrial-success: #059669;
+  --industrial-warning: #d97706;
+  --industrial-danger: #dc2626;
+
+  /* Glassmorphism */
   --glass-bg: rgba(255, 255, 255, 0.85);
   --glass-border: rgba(255, 255, 255, 0.4);
+  --glass-blur: blur(16px);
 
   --font-family: 'Outfit', 'Plus Jakarta Sans', sans-serif;
   --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Technological Tokens */
+  --neon-blue: #3b82f6;
+  --glow-blue: 0 0 15px rgba(59, 130, 246, 0.3);
 }
 
 @media (max-width: 768px) {
@@ -61,6 +75,29 @@ body {
   color: var(--text-main);
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+.tech-grid-bg {
+  background-image: 
+    linear-gradient(rgba(33, 64, 142, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(33, 64, 142, 0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideIn {
+  from { transform: translateX(-20px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+.animate-fade {
+  animation: fadeIn 0.6s ease-out forwards;
 }
 
 button {
@@ -80,36 +117,39 @@ a {
 .card {
   background: var(--bg-card);
   border-radius: var(--border-radius);
-  box-shadow: var(--shadow-sm);
-  padding: 1.5rem;
-  border: 1px solid rgba(226, 232, 240, 0.8);
+  box-shadow: var(--shadow);
+  padding: 2rem;
+  border: 1px solid rgba(226, 232, 240, 0.5);
   transition: var(--transition);
+  position: relative;
+  overflow: hidden;
 }
 
 .card:hover {
-  box-shadow: var(--shadow-md);
-  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-4px);
+  border-color: rgba(33, 64, 142, 0.1);
 }
 
 .btn-primary {
-  background-color: var(--primary);
+  background: var(--primary-gradient);
   color: white;
-  height: 40px;
-  padding: 0 20px;
-  border-radius: 8px;
-  font-weight: 600;
+  height: 48px;
+  padding: 0 24px;
+  border-radius: 12px;
+  font-weight: 700;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  font-size: 0.9375rem;
-  box-shadow: 0 4px 14px 0 rgba(0, 97, 255, 0.39);
+  gap: 10px;
+  font-size: 1rem;
+  box-shadow: 0 10px 20px -5px rgba(33, 64, 142, 0.3);
 }
 
 .btn-primary:hover {
-  background-color: var(--primary-hover);
-  box-shadow: 0 6px 20px rgba(0, 97, 255, 0.23);
-  transform: translateY(-1px);
+  transform: translateY(-2px);
+  box-shadow: 0 15px 30px -5px rgba(33, 64, 142, 0.4);
+  filter: brightness(1.1);
 }
 
 .btn-primary:active {
@@ -118,26 +158,26 @@ a {
 
 /* Form Elements */
 .input-group {
-  margin-bottom: 1.5rem;
+  margin-bottom: 2rem;
 }
 
 .input-group label {
   display: block;
-  margin-bottom: 6px;
+  margin-bottom: 8px;
   color: var(--text-secondary);
-  font-weight: 600;
-  font-size: 0.85rem;
+  font-weight: 700;
+  font-size: 0.8rem;
   text-transform: uppercase;
-  letter-spacing: 0.025em;
+  letter-spacing: 0.08em;
 }
 
 .input-group input,
 .input-group select,
 .input-group textarea {
   width: 100%;
-  padding: 12px 16px;
+  padding: 14px 20px;
   background: #ffffff;
-  border: 1px solid #e2e8f0;
+  border: 2px solid #edf2f7;
   border-radius: var(--border-radius);
   outline: none;
   font-family: inherit;
@@ -146,65 +186,197 @@ a {
   color: var(--text-main);
 }
 
-.input-group input:focus {
+.input-group input:focus,
+.input-group select:focus,
+.input-group textarea:focus {
   border-color: var(--primary);
-  box-shadow: 0 0 0 4px rgba(0, 97, 255, 0.1);
+  box-shadow: 0 0 0 4px rgba(33, 64, 142, 0.1);
   background: #fff;
 }
 
-/* Page Titles */
-.page-title {
-  font-size: 1.875rem;
-  font-weight: 800;
-  color: var(--text-main);
-  letter-spacing: -0.025em;
-  margin-bottom: 0.5rem;
+/* Industrial Badge Component */
+.ind-badge {
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 0.7rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
 }
 
-.page-subtitle {
-  color: var(--text-muted);
-  font-size: 1rem;
-  margin-bottom: 2rem;
+.ind-badge-primary { background: #eff6ff; color: #1e40af; }
+.ind-badge-success { background: #f0fdf4; color: #166534; }
+.ind-badge-warning { background: #fffbeb; color: #92400e; }
+.ind-badge-danger { background: #fef2f2; color: #991b1b; }
+.ind-badge-info { background: #f0f9ff; color: #075985; }
+
+
+/* ============================================================
+   INDUSTRIAL PREMIUM FRAMEWORK - THE TRUST DESIGN SYSTEM
+   ============================================================ */
+
+/* Unified Container */
+.ind-container {
+    padding: 2.5rem;
+    animation: fadeIn 0.6s cubic-bezier(0.2, 0, 0, 1);
+    max-width: 1600px;
+    margin: 0 auto;
+    min-height: 100vh;
 }
 
-/* Custom Scrollbar */
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+/* Page Header Structure */
+.ind-page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 2px solid var(--industrial-border);
 }
 
-::-webkit-scrollbar-track {
-  background: transparent;
+.ind-title-group h1 {
+    font-size: 2.5rem;
+    font-weight: 900;
+    color: var(--industrial-blue);
+    letter-spacing: -0.03em;
+    margin: 0;
 }
 
-::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
-  border-radius: 10px;
+.ind-title-group p {
+    color: var(--text-secondary);
+    font-weight: 500;
+    font-size: 1rem;
+    margin-top: 4px;
 }
 
-::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+/* Premium Technical Grid */
+.ind-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+    gap: 24px;
 }
 
-/* Global Back Button Style */
-.back-btn-pill {
-  background: white;
-  border: 1px solid #e2e8f0;
-  width: 44px;
-  height: 44px;
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: var(--transition);
-  color: var(--text-secondary);
-  box-shadow: var(--shadow-sm);
-  flex-shrink: 0;
+/* The Technical Identification Card (The 'Tag') */
+.ind-card {
+    background: white;
+    border-radius: 20px;
+    border: 1px solid var(--industrial-border);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transition: var(--transition);
+    box-shadow: var(--shadow-sm);
 }
 
-.back-btn-pill:hover {
-  background: #f1f5f9;
-  color: var(--text-main);
-  box-shadow: var(--shadow);
+.ind-card:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--shadow-lg);
+    border-color: #cbd5e1;
 }
+
+.ind-card-tag {
+    background: var(--industrial-silver);
+    padding: 14px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--industrial-border);
+}
+
+.ind-card-body {
+    padding: 24px;
+    flex: 1;
+}
+
+.ind-card-footer {
+    padding: 16px 24px;
+    background: white;
+    border-top: 1px solid var(--industrial-silver);
+    display: flex;
+    gap: 10px;
+}
+
+/* Typography for Cards */
+.ind-card-title {
+    font-size: 1.35rem;
+    font-weight: 800;
+    color: var(--industrial-blue);
+    margin-bottom: 4px;
+}
+
+.ind-card-subtitle {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+/* Industrial Data View */
+.ind-data-mini-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    padding: 16px;
+    background: var(--bg-main);
+    border-radius: 12px;
+    margin: 1.5rem 0;
+}
+
+.ind-data-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.ind-data-label {
+    font-size: 0.65rem;
+    font-weight: 800;
+    color: var(--text-muted);
+    text-transform: uppercase;
+}
+
+.ind-data-value {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--text-main);
+}
+
+/* Global Button Styles Refined */
+.ind-btn {
+    padding: 12px 20px;
+    border-radius: 12px;
+    font-weight: 800;
+    font-size: 0.8rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: var(--transition);
+    text-transform: uppercase;
+}
+
+.ind-btn-primary {
+    background: var(--primary-gradient);
+    color: white;
+    box-shadow: var(--glow-blue);
+}
+
+.ind-btn-secondary {
+    background: white;
+    border: 1px solid var(--industrial-border);
+    color: var(--text-secondary);
+}
+
+.ind-btn-danger {
+    background: #fee2e2;
+    color: var(--industrial-danger);
+    border: 1px solid #fecaca;
+}
+
+@media (max-width: 768px) {
+    .ind-container { padding: 1.5rem; }
+    .ind-grid { grid-template-columns: 1fr; }
+}

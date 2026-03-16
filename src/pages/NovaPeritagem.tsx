@@ -5,6 +5,7 @@ import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
 import { USIMINAS_ITEMS } from '../constants/usiminasItems';
 import { STANDARD_ITEMS } from '../constants/standardItems';
+import { CYLINDER_INSPECTION_MODEL } from '../constants/cylinderModel';
 import { compressImage } from '../lib/imageUtils';
 import { DIMENSIONAL_ANOMALIES_SERVICES } from '../constants/dimensionalItems';
 import { syncPhotosToGallery } from '../lib/photoSync';
@@ -354,7 +355,7 @@ export const NovaPeritagem: React.FC = () => {
             if (fixedData.cliente === 'USIMINAS') {
                 list = USIMINAS_ITEMS;
             } else {
-                list = STANDARD_ITEMS;
+                list = CYLINDER_INSPECTION_MODEL;
             }
 
             setChecklistItems(list.map((text) => {
@@ -869,33 +870,19 @@ export const NovaPeritagem: React.FC = () => {
         return (
             <div className="nova-peritagem-container start-screen">
                 <div className="selection-card">
-                    <h2>Selecione o Tipo de Cilindro</h2>
-                    <p>Inicie o formulário de peritagem escolhendo a tecnologia do equipamento.</p>
-                    <div className="type-options">
-                        <button className={`type-btn ${cylinderType === 'Cilindros' ? 'active' : ''}`} onClick={() => setCylinderType('Cilindros')}>
-                            Relatório Padrão
-                        </button>
-                        <div className="divider-or">ou atalho rápido</div>
-                        <button
-                            className="type-btn usiminas-btn"
-                            onClick={() => {
-                                setCylinderType('Cilindros');
-                                setFixedData(prev => ({ ...prev, cliente: 'USIMINAS' }));
-                                setStep(1);
-                            }}
-                        >
-                            <span className="btn-label">Relatório Usiminas</span>
-                        </button>
-                    </div>
+                    <h2>Nova Peritagem Técnica</h2>
+                    <p>Clique no botão abaixo para iniciar o preenchimento do laudo pericial.</p>
+                    
                     {motivoRejeicao && (
                         <div style={{
                             padding: '20px',
-                            margin: '20px',
+                            margin: '20px 0',
                             background: '#fef2f2',
                             border: '1px solid #fee2e2',
                             borderLeft: '5px solid #ef4444',
                             borderRadius: '12px',
-                            animation: 'slideIn 0.3s ease-out'
+                            animation: 'slideIn 0.3s ease-out',
+                            textAlign: 'left'
                         }}>
                             <h3 style={{ color: '#991b1b', fontSize: '1rem', fontWeight: '800', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '8px' }}>
                                 <X size={18} /> REPROVADA PELO PCP
@@ -906,15 +893,18 @@ export const NovaPeritagem: React.FC = () => {
                         </div>
                     )}
 
-                    {cylinderType === null ? (
-                        <button className="btn-start" onClick={() => setStep(1)}>
-                            Avançar para Formulário
+                    <div style={{ marginTop: '2.5rem' }}>
+                        <button 
+                            className="btn-start" 
+                            style={{ width: '100%', padding: '20px', fontSize: '1.2rem', fontWeight: '800' }}
+                            onClick={() => {
+                                setCylinderType('Cilindros');
+                                setStep(1);
+                            }}
+                        >
+                            Iniciar
                         </button>
-                    ) : (
-                        <button className="btn-start" onClick={() => setStep(1)}>
-                            Avançar para Formulário
-                        </button>
-                    )}
+                    </div>
                 </div>
             </div>
         );
