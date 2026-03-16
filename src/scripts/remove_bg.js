@@ -4,7 +4,7 @@ import path from 'path';
 async function removeBackground() {
     try {
         const inputPath = 'C:/Users/User/.gemini/antigravity/brain/feefdb77-d693-4d00-b7c5-2381a60d0b0d/uploaded_image_1767124548717.png';
-        const outputPath = 'c:/Users/User/Documents/hidraup/public/logo.png';
+        const outputPath = 'c:/Users/User/Documents/App trut tec/public/logo.png';
 
         const image = await Jimp.read(inputPath);
 

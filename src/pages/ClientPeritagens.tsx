@@ -266,7 +266,7 @@ export const ClientPeritagens: React.FC = () => {
     return (
         <div className="client-portal-container">
             <header className="welcome-hero">
-                <h1>Acompanhamento em Tempo Real — {clienteNome || 'Hidraup'}</h1>
+                <h1>Acompanhamento em Tempo Real — {clienteNome || 'Trust Tecnologia'}</h1>
                 <p>Transparência total no processo de manutenção e reparo dos seus equipamentos.</p>
             </header>
 

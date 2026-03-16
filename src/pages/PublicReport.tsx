@@ -109,7 +109,7 @@ export const PublicReport: React.FC = () => {
         <div className="public-report-container download-mode">
             <div className="download-center">
                 <div className="brand-logo">
-                    <img src="/logo.png" alt="HIDRAUP" />
+                    <img src="/logo.png" alt="Trust Tecnologia" />
                 </div>
 
                 <div className="status-container">

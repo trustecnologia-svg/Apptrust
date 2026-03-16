@@ -175,7 +175,8 @@ const QrCodePDF = ({ peritagem, qrDataUrl }: { peritagem: PeritagemSummary, qrDa
 
 // Função para obter a URL base correta (evita localhost no QR Code)
 const getBaseUrl = () => {
-    return 'https://www.hidraupperitagem.com.br';
+    // TODO: Atualizar com o domínio definitivo da Trust Tecnologia
+    return window.location.origin;
 };
 
 export const QrCodePage: React.FC = () => {

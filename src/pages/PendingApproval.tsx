@@ -114,7 +114,7 @@ export const PendingApproval: React.FC = () => {
             </div>
 
             <p style={{ marginTop: '24px', color: '#94a3b8', fontSize: '0.9rem' }}>
-                &copy; {new Date().getFullYear()} Hidraup. Todos os direitos reservados.
+                &copy; {new Date().getFullYear()} Trust Tecnologia. Todos os direitos reservados.
             </p>
         </div>
     );
