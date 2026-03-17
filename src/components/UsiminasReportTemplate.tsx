@@ -363,66 +363,61 @@ export const UsiminasReportTemplate: React.FC<{ data: ReportData }> = ({ data })
                 {/* Título Central */}
 
 
-                {/* Tabela de Cabeçalho - Layout 2 Colunas */}
-                <View style={{ marginTop: 10, borderBottomWidth: 1, borderBottomColor: '#eee', paddingBottom: 10 }}>
-                    {/* Título com faixa azul */}
-                    <View style={{ padding: 5, alignItems: 'center', justifyContent: 'center', backgroundColor: '#005696', marginBottom: 10 }}>
+                <View style={{ marginTop: 10 }}>
+                    <View style={{ padding: 5, alignItems: 'center', justifyContent: 'center', backgroundColor: '#005696', marginBottom: 5 }}>
                         <Text style={{ fontSize: 12, fontWeight: 'bold', color: '#fff' }}>IDENTIFICAÇÃO</Text>
                     </View>
 
-                    {/* Grid de 2 Colunas - Somente campos preenchidos */}
-                    <View style={{ flexDirection: 'row' }}>
-                        {/* Coluna 1 */}
-                        <View style={{ width: '50%', paddingRight: 10 }}>
+                    <View style={{ flexDirection: 'row', borderBottomWidth: 1, borderBottomColor: '#eee', paddingBottom: 8 }}>
+                        <View style={{ width: '50%' }}>
                             {hasValue(data.numero_os) && (
-                                <View style={{ marginBottom: 6 }}>
-                                    <Text style={{ fontSize: 8, fontWeight: 'bold', color: '#555', marginBottom: 1 }}>LAUDO / REPARO:</Text>
+                                <View style={{ marginBottom: 4 }}>
+                                    <Text style={{ fontSize: 8, fontWeight: 'bold', color: '#555' }}>LAUDO / REPARO:</Text>
                                     <Text style={{ fontSize: 9 }}>{(data.numero_os && (!data.numero_os.startsWith('S/OS-') || data.numero_os.length < 15)) ? data.numero_os : 'NÃO INFORMADA'}</Text>
                                 </View>
                             )}
                             {hasValue(data.tipo_modelo) && (
-                                <View style={{ marginBottom: 6 }}>
-                                    <Text style={{ fontSize: 8, fontWeight: 'bold', color: '#555', marginBottom: 1 }}>TIPO:</Text>
+                                <View style={{ marginBottom: 4 }}>
+                                    <Text style={{ fontSize: 8, fontWeight: 'bold', color: '#555' }}>TIPO:</Text>
                                     <Text style={{ fontSize: 9 }}>{data.tipo_modelo}</Text>
                                 </View>
                             )}
                             {hasValue(data.linha) && (
-                                <View style={{ marginBottom: 6 }}>
-                                    <Text style={{ fontSize: 8, fontWeight: 'bold', color: '#555', marginBottom: 1 }}>LINHA:</Text>
+                                <View style={{ marginBottom: 4 }}>
+                                    <Text style={{ fontSize: 8, fontWeight: 'bold', color: '#555' }}>LINHA:</Text>
                                     <Text style={{ fontSize: 9 }}>{data.linha}</Text>
                                 </View>
                             )}
                             {hasValue(data.local_equipamento) && (
-                                <View style={{ marginBottom: 6 }}>
-                                    <Text style={{ fontSize: 8, fontWeight: 'bold', color: '#555', marginBottom: 1 }}>LOCAL:</Text>
+                                <View style={{ marginBottom: 4 }}>
+                                    <Text style={{ fontSize: 8, fontWeight: 'bold', color: '#555' }}>LOCAL:</Text>
                                     <Text style={{ fontSize: 9 }}>{data.local_equipamento}</Text>
                                 </View>
                             )}
                         </View>
 
-                        {/* Coluna 2 */}
                         <View style={{ width: '50%', paddingLeft: 10 }}>
                             {hasValue(data.area) && (
-                                <View style={{ marginBottom: 6 }}>
-                                    <Text style={{ fontSize: 8, fontWeight: 'bold', color: '#555', marginBottom: 1 }}>ÁREA:</Text>
+                                <View style={{ marginBottom: 4 }}>
+                                    <Text style={{ fontSize: 8, fontWeight: 'bold', color: '#555' }}>ÁREA:</Text>
                                     <Text style={{ fontSize: 9 }}>{data.area}</Text>
                                 </View>
                             )}
                             {hasValue(data.desenho_conjunto) && (
-                                <View style={{ marginBottom: 6 }}>
-                                    <Text style={{ fontSize: 8, fontWeight: 'bold', color: '#555', marginBottom: 1 }}>DESENHO:</Text>
+                                <View style={{ marginBottom: 4 }}>
+                                    <Text style={{ fontSize: 8, fontWeight: 'bold', color: '#555' }}>DESENHO:</Text>
                                     <Text style={{ fontSize: 9 }}>{data.desenho_conjunto}</Text>
                                 </View>
                             )}
                             {hasValue(data.tag) && (
-                                <View style={{ marginBottom: 6 }}>
-                                    <Text style={{ fontSize: 8, fontWeight: 'bold', color: '#555', marginBottom: 1 }}>TAG:</Text>
+                                <View style={{ marginBottom: 4 }}>
+                                    <Text style={{ fontSize: 8, fontWeight: 'bold', color: '#555' }}>TAG:</Text>
                                     <Text style={{ fontSize: 9 }}>{data.tag}</Text>
                                 </View>
                             )}
                             {hasValue(data.ni) && (
-                                <View style={{ marginBottom: 6 }}>
-                                    <Text style={{ fontSize: 8, fontWeight: 'bold', color: '#555', marginBottom: 1 }}>MATERIAL / NI:</Text>
+                                <View style={{ marginBottom: 4 }}>
+                                    <Text style={{ fontSize: 8, fontWeight: 'bold', color: '#555' }}>MATERIAL / NI:</Text>
                                     <Text style={{ fontSize: 9 }}>{data.ni}</Text>
                                 </View>
                             )}
@@ -431,27 +426,23 @@ export const UsiminasReportTemplate: React.FC<{ data: ReportData }> = ({ data })
                 </View>
             </View>
 
-            {/* Tabela de Dimensões sem bordas com cabeçalho azul */}
-            <View style={{ marginTop: 10 }} wrap={false}>
-                <View style={{ backgroundColor: '#005696', padding: 3, marginBottom: 0 }}>
+            <View style={{ marginTop: 10, backgroundColor: '#f9f9f9', padding: 5, borderBottomWidth: 1, borderBottomColor: '#ccc' }}>
+                <View style={{ backgroundColor: '#005696', padding: 3, marginBottom: 5 }}>
                     <Text style={{ fontSize: 10, fontWeight: 'bold', color: '#fff' }}>DIMENSÕES TÉCNICAS (MM)</Text>
                 </View>
-                {/* Layout Stacked para evitar sobreposição */}
-                <View style={{ padding: 4, flexDirection: 'row' }}>
-                    <View style={{ width: '65%' }}>
-                        <Text style={{ fontSize: 9 }}>
-                            <Text style={{ fontWeight: 'bold' }}>CAMISA: </Text>
-                            Ø INT. {formatDim(data.camisa_int)} x Ø EXT. {formatDim(data.camisa_ext)} x COMP. {formatDim(data.camisa_comp)}
-                        </Text>
-                        <Text style={{ fontSize: 9, marginTop: 4 }}>
-                            <Text style={{ fontWeight: 'bold' }}>CURSO: </Text>
-                            {formatDim(data.curso)}
-                        </Text>
-                    </View>
-                    <View style={{ width: '35%' }}>
-                        <Text style={{ fontSize: 9 }}>
+                <View style={{ padding: 2 }}>
+                    <Text style={{ fontSize: 9, marginBottom: 4 }}>
+                        <Text style={{ fontWeight: 'bold' }}>CAMISA: </Text>
+                        Ø INT. {formatDim(data.camisa_int)} x Ø EXT. {formatDim(data.camisa_ext)} x COMP. {formatDim(data.camisa_comp)}
+                    </Text>
+                    <View style={{ flexDirection: 'row' }}>
+                        <Text style={{ fontSize: 9, width: '50%' }}>
                             <Text style={{ fontWeight: 'bold' }}>HASTE: </Text>
                             Ø {formatDim(data.haste_diam)} x COMP. {formatDim(data.haste_comp)}
+                        </Text>
+                        <Text style={{ fontSize: 9, width: '50%' }}>
+                            <Text style={{ fontWeight: 'bold' }}>CURSO: </Text>
+                            {formatDim(data.curso)}
                         </Text>
                     </View>
                 </View>

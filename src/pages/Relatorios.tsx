@@ -52,7 +52,6 @@ export const Relatorios: React.FC = () => {
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedId, setSelectedId] = useState<string | null>(null);
-    const [fullReportData, setFullReportData] = useState<any>(null);
     const [generatingPdf, setGeneratingPdf] = useState(false);
 
 
@@ -77,7 +76,7 @@ export const Relatorios: React.FC = () => {
     };
 
     const handleGenerateData = async (peritagem: Peritagem) => {
-        if (selectedId === peritagem.id && fullReportData) return; // Já carregado
+        // Removido cache para garantir dados sempre atualizados
 
         try {
             // 0. Buscar dados completos da peritagem (caso a lista esteja otimizada)
@@ -189,7 +188,6 @@ export const Relatorios: React.FC = () => {
                 observacoes_gerais: String(fullPeritagem.observacoes_gerais || '-')
             };
 
-            setFullReportData(reportData);
             return reportData;
         } catch (err) {
             console.error('Erro ao preparar dados do relatório:', err);
