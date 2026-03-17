@@ -1,5 +1,5 @@
 .sidebar {
-    width: 280px;
+    width: 300px;
     height: 100vh;
     background: #ffffff; /* Premium Industrial White */
     color: #0f172a;
@@ -91,7 +91,7 @@
 }
 
 .sidebar-footer {
-    padding: 1.5rem;
+    padding: 1.5rem 1rem;
     border-top: 1px solid #f1f5f9;
     background: #f8fafc;
 }
@@ -136,25 +136,24 @@
 
 .btn-logout {
     width: 100%;
-    padding: 0.75rem;
-    background: white;
-    color: #ef4444;
-    border: 1px solid #fecaca;
-    border-radius: 10px;
+    padding: 0.85rem 1.25rem;
+    background: #fff5f5;
+    color: #e53e3e;
+    border: 1px solid #fee2e2;
+    border-radius: 12px;
     display: flex;
     align-items: center;
-    justify-content: center;
-    gap: 8px;
-    font-size: 0.85rem;
+    gap: 12px;
+    font-size: 0.9rem;
     font-weight: 700;
     cursor: pointer;
     transition: all 0.3s ease;
 }
 
 .btn-logout:hover {
-    background: #fef2f2;
-    border-color: #ef4444;
-    transform: translateY(-2px);
+    background: #fee2e2;
+    border-color: #fecaca;
+    transform: translateX(4px);
 }
 
 @media (max-width: 768px) {

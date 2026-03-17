@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, Plus, Camera, Image as ImageIcon, X, CheckCircle, AlertCircle, Save, Info } from 'lucide-react';
+import { ArrowLeft, Plus, Camera, Image as ImageIcon, X, CheckCircle, AlertCircle, Save, Info, ShieldCheck, FileSearch, ClipboardList } from 'lucide-react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
@@ -128,7 +128,7 @@ export const NovaPeritagem: React.FC = () => {
         pressaoNominal: '',
         fabricanteModelo: ''
     });
-    const [dimStatus, setDimStatus] = useState<StatusColor>('vermelho');
+
     const [fotoFrontal, setFotoFrontal] = useState<string>('');
 
     const frontalCameraRef = React.useRef<HTMLInputElement>(null);
@@ -351,12 +351,7 @@ export const NovaPeritagem: React.FC = () => {
     // Quando mudar o tipo de cilindro, inicializa o checklist APENAS SE NÃO ESTIVER EDITANDO
     useEffect(() => {
         if (cylinderType && !editId) {
-            let list = [];
-            if (fixedData.cliente === 'USIMINAS') {
-                list = USIMINAS_ITEMS;
-            } else {
-                list = CYLINDER_INSPECTION_MODEL;
-            }
+            const list = CYLINDER_INSPECTION_MODEL;
 
             setChecklistItems(list.map((text) => {
                 return {
@@ -417,10 +412,6 @@ export const NovaPeritagem: React.FC = () => {
                         pressaoNominal: data.pressao_nominal || '',
                         fabricanteModelo: data.fabricante_modelo || ''
                     });
-                    setDimStatus('verde');
-                    setFixedData(prev => ({ ...prev, local_equipamento: data.local_equipamento || prev.local_equipamento, cliente: data.cliente || prev.cliente }));
-                } else if (fixedData.tag.length > 0) {
-                    setDimStatus('amarelo');
                 }
             }
         };
@@ -795,7 +786,6 @@ export const NovaPeritagem: React.FC = () => {
 
             // Atualizar status local para azul
             setChecklistItems(prev => prev.map(item => ({ ...item, status: 'azul' })));
-            setDimStatus('azul');
 
             // 3. Atualizar status na tabela 'aguardando_peritagem' se existir
             if (fixedData.os_interna) {
@@ -846,15 +836,7 @@ export const NovaPeritagem: React.FC = () => {
         }
     };
 
-    const renderIndicator = (status: StatusColor) => {
-        const colors = {
-            vermelho: '#ff4d4d',
-            amarelo: '#ffcc00',
-            verde: '#27ae60',
-            azul: '#2980b9'
-        };
-        return <div className="status-dot-animated" style={{ backgroundColor: colors[status], width: '14px', height: '14px' }} />;
-    };
+
 
     if (step === 0) {
         if (loading) {
@@ -868,10 +850,29 @@ export const NovaPeritagem: React.FC = () => {
         }
 
         return (
-            <div className="nova-peritagem-container start-screen">
+            <div className="nova-peritagem-container start-screen tech-grid-bg">
                 <div className="selection-card">
-                    <h2>Nova Peritagem Técnica</h2>
-                    <p>Clique no botão abaixo para iniciar o preenchimento do laudo pericial.</p>
+                    <div className="card-industrial-header" style={{ marginBottom: '2rem', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                        <div style={{ 
+                            width: '80px', 
+                            height: '80px', 
+                            background: 'var(--primary-light)', 
+                            borderRadius: '24px', 
+                            display: 'flex', 
+                            alignItems: 'center', 
+                            justifyContent: 'center',
+                            marginBottom: '1.5rem',
+                            color: 'var(--primary)',
+                            boxShadow: 'inset 0 2px 4px rgba(33, 64, 142, 0.1)'
+                        }}>
+                            <ShieldCheck size={40} strokeWidth={1.5} />
+                        </div>
+                        <span className="ind-badge ind-badge-primary" style={{ marginBottom: '1rem' }}>Módulo Técnico v2.0</span>
+                        <h2>Nova Peritagem Técnica</h2>
+                        <p style={{ maxWidth: '400px', margin: '0 auto', fontSize: '1rem' }}>
+                            Inicie o processo de inspeção técnica detalhada para geração de laudos periciais e acompanhamento de manutenção.
+                        </p>
+                    </div>
                     
                     {motivoRejeicao && (
                         <div style={{
@@ -880,12 +881,12 @@ export const NovaPeritagem: React.FC = () => {
                             background: '#fef2f2',
                             border: '1px solid #fee2e2',
                             borderLeft: '5px solid #ef4444',
-                            borderRadius: '12px',
+                            borderRadius: '16px',
                             animation: 'slideIn 0.3s ease-out',
                             textAlign: 'left'
                         }}>
                             <h3 style={{ color: '#991b1b', fontSize: '1rem', fontWeight: '800', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                <X size={18} /> REPROVADA PELO PCP
+                                <AlertCircle size={18} /> REPROVADA PELO PCP
                             </h3>
                             <p style={{ color: '#b91c1c', fontSize: '0.9rem', margin: 0 }}>
                                 <strong>Motivo:</strong> {motivoRejeicao}
@@ -896,14 +897,36 @@ export const NovaPeritagem: React.FC = () => {
                     <div style={{ marginTop: '2.5rem' }}>
                         <button 
                             className="btn-start" 
-                            style={{ width: '100%', padding: '20px', fontSize: '1.2rem', fontWeight: '800' }}
+                            style={{ 
+                                width: '100%', 
+                                height: '64px',
+                                padding: '20px', 
+                                fontSize: '1.25rem', 
+                                fontWeight: '800',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                gap: '12px'
+                            }}
                             onClick={() => {
                                 setCylinderType('Cilindros');
                                 setStep(1);
                             }}
                         >
-                            Iniciar
+                            <ClipboardList size={22} />
+                            Iniciar Diagnóstico
                         </button>
+                    </div>
+
+                    <div className="card-footer-info" style={{ marginTop: '2rem', paddingTop: '2rem', borderTop: '1px solid rgba(0,0,0,0.05)', display: 'flex', justifyContent: 'center', gap: '2rem' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-muted)', fontSize: '0.8rem', fontWeight: '700' }}>
+                            <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--success)' }}></div>
+                            SISTEMA ONLINE
+                        </div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-muted)', fontSize: '0.8rem', fontWeight: '700' }}>
+                           <FileSearch size={14} />
+                           LAUDO PADRONIZADO
+                        </div>
                     </div>
                 </div>
             </div>
@@ -915,17 +938,22 @@ export const NovaPeritagem: React.FC = () => {
             <header className="header-sticky">
                 <div className="header-content">
                     <button className="btn-back-circle" onClick={() => setStep(0)}>
-                        <ArrowLeft size={24} />
+                        <ArrowLeft size={22} />
                     </button>
                     <div className="title-group">
-                        <h1 className="page-title">Peritagem - {cylinderType}</h1>
-                        <span className="subtitle">Preencha os dados técnicos abaixo</span>
+                        <span className="ind-badge ind-badge-info" style={{ marginBottom: '4px' }}>DIAGNÓSTICO TÉCNICO</span>
+                        <h1 className="page-title">Inspeção de {cylinderType}</h1>
+                        <span className="subtitle" style={{ fontWeight: '500' }}>Módulo de Peritagem Industrial</span>
                     </div>
                 </div>
                 <div className="header-actions-top">
-                    <button className="btn-save-top" onClick={handleSubmit} disabled={loading}>
-                        <Save size={20} />
-                        {loading ? 'Salvando...' : 'Salvar Peritagem'}
+                    <button className="btn-save-top" onClick={handleSubmit} disabled={loading} style={{ 
+                        background: 'var(--primary-gradient)',
+                        borderRadius: '12px',
+                        boxShadow: '0 8px 16px rgba(33, 64, 142, 0.2)'
+                    }}>
+                        <Save size={18} />
+                        {loading ? 'Sincronizando...' : 'Concluir Diagnóstico'}
                     </button>
                 </div>
             </header>
@@ -1016,338 +1044,178 @@ export const NovaPeritagem: React.FC = () => {
                     <div className="card-header main-card-header">
                         <CheckCircle className="header-icon-blue" />
                         <div className="header-titles">
-                            <h3>FORMULÁRIO DE PERITAGEM</h3>
-                            <span className="subtitle">CILINDROS HIDRÁULICOS E PNEUMÁTICOS | PÁG.: 1 DE 2</span>
+                            <h3>ORDEM E IDENTIFICAÇÃO</h3>
+                            <span className="subtitle" style={{ fontWeight: '500' }}>Dados Genéricos e Referenciais do Serviço</span>
                         </div>
                     </div>
-                    <div className="grid-form">
-                        {/* CAMPOS INTERNOS (TELA APENAS) */}
-                        <div className="form-group full-row" style={{ marginBottom: '20px', borderBottom: '2px dashed #eee', paddingBottom: '15px' }}>
-                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px' }}>
-                                <div>
-                                    <label style={{ fontWeight: 'bold', color: '#e67e22' }}>ORDEM DE SERVIÇO INTERNA (USO INTERNO)</label>
-                                    <input
-                                        placeholder="OS Interna"
-                                        value={fixedData.os_interna}
-                                        onChange={e => setFixedData({ ...fixedData, os_interna: e.target.value.toUpperCase() })}
-                                        style={{ width: '100%', borderBottom: '1px solid #e67e22', borderRadius: 0, padding: '5px', backgroundColor: '#fff8f0' }}
-                                    />
-                                </div>
-                                <div>
-                                    <label style={{ fontWeight: 'bold', color: '#e67e22' }}>NOME DO CLIENTE</label>
-                                    {!isCustomClient ? (
-                                        <select
-                                            required
-                                            value={fixedData.cliente}
-                                            onChange={e => {
-                                                const val = e.target.value;
-                                                if (val === 'OUTROS') {
-                                                    setIsCustomClient(true);
-                                                    setFixedData({ ...fixedData, cliente: '' });
-                                                } else {
-                                                    setFixedData({ ...fixedData, cliente: val });
-                                                }
-                                            }}
-                                            style={{ width: '100%', borderBottom: '1px solid #e67e22', borderRadius: 0, padding: '5px', backgroundColor: '#fff8f0', color: '#333' }}
-                                        >
-                                            <option value="" disabled>Selecione o Cliente...</option>
-                                            {PREDEFINED_CLIENTS.map(c => (
-                                                <option key={c} value={c}>{c}</option>
-                                            ))}
-                                            {fixedData.cliente === 'USIMINAS' && <option value="USIMINAS">USIMINAS</option>}
-                                            <option value="OUTROS">OUTROS (DIGITAR MANUAL)</option>
-                                        </select>
-                                    ) : (
-                                        <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-                                            <input
-                                                required
-                                                placeholder="Digite o Nome do Cliente"
-                                                value={fixedData.cliente}
-                                                onChange={e => setFixedData({ ...fixedData, cliente: e.target.value.toUpperCase() })}
-                                                style={{ width: '100%', borderBottom: '1px solid #e67e22', borderRadius: 0, padding: '5px', backgroundColor: '#fff8f0' }}
-                                            />
-                                            <button
-                                                type="button"
-                                                onClick={() => {
-                                                    setIsCustomClient(false);
-                                                    setFixedData({ ...fixedData, cliente: '' });
-                                                }}
-                                                style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#e67e22', display: 'flex', alignItems: 'center' }}
-                                            >
-                                                <X size={20} />
-                                            </button>
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
+                    
+                    <div className="form-section-title">
+                        <div style={{ width: '4px', height: '18px', background: 'var(--primary)', borderRadius: '2px' }}></div>
+                        GESTÃO DE ATENDIMENTO
+                    </div>
+
+                    <div className="info-grid">
+                        <div className="form-group">
+                            <label>ID / OS INTERNA (MASTER)</label>
+                            <input 
+                                placeholder="Auto-gerado ou OS Superior" 
+                                value={fixedData.os_interna} 
+                                onChange={e => setFixedData({...fixedData, os_interna: e.target.value.toUpperCase()})}
+                                style={{ fontWeight: '800', color: 'var(--primary)', background: 'var(--primary-light)', border: '1px solid var(--primary)' }}
+                            />
                         </div>
+                        <div className="form-group">
+                            <label>CLIENTE / PARCEIRO</label>
+                            {!isCustomClient ? (
+                                <select 
+                                    value={fixedData.cliente} 
+                                    onChange={e => {
+                                        if (e.target.value === 'OUTROS') setIsCustomClient(true);
+                                        else setFixedData({...fixedData, cliente: e.target.value});
+                                    }}
+                                >
+                                    <option value="">Selecione...</option>
+                                    {PREDEFINED_CLIENTS.map(c => <option key={c} value={c}>{c}</option>)}
+                                    <option value="OUTROS">OUTRO CLIENTE (MANUAL)</option>
+                                </select>
+                            ) : (
+                                <div style={{ position: 'relative' }}>
+                                    <input 
+                                        placeholder="Nome do Cliente..." 
+                                        value={fixedData.cliente} 
+                                        onChange={e => setFixedData({...fixedData, cliente: e.target.value.toUpperCase()})}
+                                    />
+                                    <button onClick={() => setIsCustomClient(false)} style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', border: 'none', background: 'none', color: 'var(--danger)', cursor: 'pointer' }}><X size={16}/></button>
+                                </div>
+                            )}
+                        </div>
+                        <div className="form-group">
+                            <label>DATA DA INSPEÇÃO</label>
+                            <input type="date" value={fixedData.data_inspecao} onChange={e => setFixedData({...fixedData, data_inspecao: e.target.value})} />
+                        </div>
+                        <div className="form-group">
+                            <label>RESPONSÁVEL TÉCNICO</label>
+                            <input placeholder="Nome do perito" value={fixedData.responsavel_tecnico} onChange={e => setFixedData({...fixedData, responsavel_tecnico: e.target.value.toUpperCase()})} />
+                        </div>
+                    </div>
 
-                        {fixedData.cliente === 'USIMINAS' ? (
-                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '15px', width: '100%' }}>
+                    <div className="form-section-title">
+                        <div style={{ width: '4px', height: '18px', background: 'var(--primary)', borderRadius: '2px' }}></div>
+                        IDENTIFICAÇÃO DO ATIVO (EQUIPAMENTO)
+                    </div>
 
+                    <div className="info-grid">
+                        <div className="form-group">
+                            <label>TAG / CÓDIGO DO ATIVO</label>
+                            <input placeholder="Ex: TAG-1234" value={fixedData.tag} onChange={e => setFixedData({...fixedData, tag: e.target.value.toUpperCase()})} />
+                        </div>
+                        <div className="form-group">
+                            <label>EQUIPAMENTO / LOCAL</label>
+                            <input placeholder="Ex: CILINDRO DE ELEVAÇÃO" value={fixedData.local_equipamento} onChange={e => setFixedData({...fixedData, local_equipamento: e.target.value.toUpperCase()})} />
+                        </div>
+                        <div className="form-group">
+                            <label>ÁREA / SETOR</label>
+                            <input placeholder="Ex: LAMINAÇÃO" value={fixedData.area} onChange={e => setFixedData({...fixedData, area: e.target.value.toUpperCase()})} />
+                        </div>
+                        <div className="form-group">
+                            <label>LINHA DE PRODUÇÃO</label>
+                            <input placeholder="Ex: LINHA 01" value={fixedData.linha} onChange={e => setFixedData({...fixedData, linha: e.target.value.toUpperCase()})} />
+                        </div>
+                    </div>
 
-                                {/* LINHA 1: NOTA/LAUDO | PROCESSO | DATA */}
-                                <div className="form-group">
-                                    <label style={{ fontWeight: 'bold' }}>NOTA / LAUDO</label>
-                                    <input
-                                        placeholder="NF"
-                                        value={fixedData.nota_fiscal}
-                                        onChange={e => setFixedData({ ...fixedData, nota_fiscal: e.target.value.toUpperCase() })}
-                                        style={{ width: '100%', borderBottom: '1px solid #000', borderRadius: 0, padding: '5px' }}
-                                    />
-                                </div>
-                                <div className="form-group">
-                                    <label style={{ fontWeight: 'bold' }}>PROCESSO / OFICINAS</label>
-                                    <input
-                                        placeholder="Pedido"
-                                        value={fixedData.pedido}
-                                        onChange={e => setFixedData({ ...fixedData, pedido: e.target.value.toUpperCase() })}
-                                        style={{ width: '100%', borderBottom: '1px solid #000', borderRadius: 0, padding: '5px' }}
-                                    />
-                                </div>
-                                <div className="form-group">
-                                    <label style={{ fontWeight: 'bold' }}>DATA</label>
-                                    <input
-                                        type="date"
-                                        value={fixedData.data_inspecao}
-                                        onChange={e => setFixedData({ ...fixedData, data_inspecao: e.target.value })}
-                                        style={{ width: '100%', borderBottom: '1px solid #000', borderRadius: 0, padding: '5px' }}
-                                    />
-                                </div>
+                    <div className="form-section-title">
+                        <div style={{ width: '4px', height: '18px', background: 'var(--primary)', borderRadius: '2px' }}></div>
+                        DADOS TÉCNICOS & FABRICAÇÃO
+                    </div>
 
-                                {/* LINHA 2: ÁREA | LINHA | EQUIPAMENTO */}
-                                <div className="form-group">
-                                    <label style={{ fontWeight: 'bold' }}>ÁREA</label>
-                                    <input
-                                        placeholder="Área"
-                                        value={fixedData.area}
-                                        onChange={e => setFixedData({ ...fixedData, area: e.target.value.toUpperCase() })}
-                                        style={{ width: '100%', borderBottom: '1px solid #000', borderRadius: 0, padding: '5px' }}
-                                    />
-                                </div>
-                                <div className="form-group">
-                                    <label style={{ fontWeight: 'bold' }}>LINHA</label>
-                                    <input
-                                        placeholder="Linha"
-                                        value={fixedData.linha}
-                                        onChange={e => setFixedData({ ...fixedData, linha: e.target.value.toUpperCase() })}
-                                        style={{ width: '100%', borderBottom: '1px solid #000', borderRadius: 0, padding: '5px' }}
-                                    />
-                                </div>
-                                <div className="form-group">
-                                    <label style={{ fontWeight: 'bold' }}>EQUIPAMENTO</label>
-                                    <input
-                                        placeholder="Local / Equipamento"
-                                        value={fixedData.local_equipamento}
-                                        onChange={e => setFixedData({ ...fixedData, local_equipamento: e.target.value.toUpperCase() })}
-                                        style={{ width: '100%', borderBottom: '1px solid #000', borderRadius: 0, padding: '5px' }}
-                                    />
-                                </div>
-
-                                {/* LINHA 3: TIPO | TAG | MATERIAL/NI */}
-                                <div className="form-group">
-                                    <label style={{ fontWeight: 'bold' }}>TIPO DE EQUIPAMENTO</label>
-                                    <input
-                                        placeholder="Tipo/Modelo"
-                                        value={fixedData.tipo_modelo}
-                                        onChange={e => setFixedData({ ...fixedData, tipo_modelo: e.target.value.toUpperCase() })}
-                                        style={{ width: '100%', borderBottom: '1px solid #000', borderRadius: 0, padding: '5px' }}
-                                    />
-                                </div>
-                                <div className="form-group">
-                                    <label style={{ fontWeight: 'bold' }}>TAG DO EQUIPAMENTO</label>
-                                    <input
-                                        placeholder="TAG"
-                                        value={fixedData.tag}
-                                        onChange={e => setFixedData({ ...fixedData, tag: e.target.value.toUpperCase() })}
-                                        style={{ width: '100%', borderBottom: '1px solid #000', borderRadius: 0, padding: '5px' }}
-                                    />
-                                </div>
-                                <div className="form-group">
-                                    <label style={{ fontWeight: 'bold' }}>MATERIAL / NI</label>
-                                    <input
-                                        placeholder="NI"
-                                        value={fixedData.ni}
-                                        onChange={e => setFixedData({ ...fixedData, ni: e.target.value.toUpperCase() })}
-                                        style={{ width: '100%', borderBottom: '1px solid #000', borderRadius: 0, padding: '5px' }}
-                                    />
-                                </div>
-
-                                {/* LINHA 4: DESENHO */}
-                                <div className="form-group" style={{ gridColumn: 'span 3' }}>
-                                    <label style={{ fontWeight: 'bold' }}>DESENHO</label>
-                                    <input
-                                        placeholder="Nº Desenho"
-                                        value={fixedData.desenho_conjunto}
-                                        onChange={e => setFixedData({ ...fixedData, desenho_conjunto: e.target.value.toUpperCase() })}
-                                        style={{ width: '100%', borderBottom: '1px solid #000', borderRadius: 0, padding: '5px' }}
-                                    />
-                                </div>
-                            </div>
-                        ) : (
-                            <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '20px', width: '100%' }}>
-                                <div className="form-group full-row">
-                                    <label style={{ fontWeight: 'bold' }}>ORDEM DE SERVIÇO</label>
-                                    <input
-                                        required
-                                        placeholder="Ex: 1234"
-                                        value={fixedData.numero_os}
-                                        onChange={e => setFixedData({ ...fixedData, numero_os: e.target.value.toUpperCase() })}
-                                        style={{ width: '100%', borderBottom: '1px solid #000', borderRadius: 0, padding: '8px 5px' }}
-                                    />
-                                </div>
-                                <div className="form-group full-row">
-                                    <label style={{ fontWeight: 'bold' }}>NF</label>
-                                    <input
-                                        placeholder="Ex: 9012"
-                                        value={fixedData.nota_fiscal}
-                                        onChange={e => setFixedData({ ...fixedData, nota_fiscal: e.target.value.toUpperCase() })}
-                                        style={{ width: '100%', borderBottom: '1px solid #000', borderRadius: 0, padding: '8px 5px' }}
-                                    />
-                                </div>
-                                <div className="form-group full-row">
-                                    <label style={{ fontWeight: 'bold' }}>NI</label>
-                                    <input
-                                        placeholder="Ex: NI-99"
-                                        value={fixedData.ni}
-                                        onChange={e => setFixedData({ ...fixedData, ni: e.target.value.toUpperCase() })}
-                                        style={{ width: '100%', borderBottom: '1px solid #000', borderRadius: 0, padding: '8px 5px' }}
-                                    />
-                                </div>
-
-                                <div className="form-group full-row">
-                                    <label style={{ fontWeight: 'bold' }}>DESENHO</label>
-                                    <input
-                                        placeholder="Referência do desenho..."
-                                        value={fixedData.desenho_conjunto}
-                                        onChange={e => setFixedData({ ...fixedData, desenho_conjunto: e.target.value.toUpperCase() })}
-                                        style={{ width: '100%', borderBottom: '1px solid #000', borderRadius: 0, padding: '8px 5px' }}
-                                    />
-                                </div>
-
-                                <div className="form-group full-row">
-                                    <label style={{ fontWeight: 'bold' }}>TIPO/ MODELO</label>
-                                    <input
-                                        placeholder="Ex: H-123"
-                                        value={fixedData.tipo_modelo}
-                                        onChange={e => setFixedData({ ...fixedData, tipo_modelo: e.target.value.toUpperCase() })}
-                                        style={{ width: '100%', borderBottom: '1px solid #000', borderRadius: 0, padding: '8px 5px' }}
-                                    />
-                                </div>
-
-                                <div className="form-group full-row">
-                                    <label style={{ fontWeight: 'bold' }}>FABRICANTE</label>
-                                    <input
-                                        placeholder="Fabricante..."
-                                        value={fixedData.fabricante}
-                                        onChange={e => setFixedData({ ...fixedData, fabricante: e.target.value.toUpperCase() })}
-                                        style={{ width: '100%', borderBottom: '1px solid #000', borderRadius: 0, padding: '8px 5px' }}
-                                    />
-                                </div>
-
-                                <div className="form-group full-row">
-                                    <label style={{ fontWeight: 'bold' }}>LUBRIFICANTE</label>
-                                    <input
-                                        placeholder="Óleo, Graxa..."
-                                        value={fixedData.lubrificante}
-                                        onChange={e => setFixedData({ ...fixedData, lubrificante: e.target.value.toUpperCase() })}
-                                        style={{ width: '100%', borderBottom: '1px solid #000', borderRadius: 0, padding: '8px 5px' }}
-                                    />
-                                </div>
-
-                                <div className="form-group full-row">
-                                    <label style={{ fontWeight: 'bold' }}>VOLUME</label>
-                                    <input
-                                        placeholder="Volume..."
-                                        value={fixedData.volume}
-                                        onChange={e => setFixedData({ ...fixedData, volume: e.target.value.toUpperCase() })}
-                                        style={{ width: '100%', borderBottom: '1px solid #000', borderRadius: 0, padding: '8px 5px' }}
-                                    />
-                                </div>
-
-                                <div className="form-group full-row">
-                                    <label style={{ fontWeight: 'bold' }}>RECEBIDO COM ACOPLAMENTO OU POLIA?</label>
-                                    <div style={{ display: 'flex', gap: '15px', marginTop: '5px' }}>
-                                        <label style={{ display: 'flex', alignItems: 'center', gap: '5px', fontWeight: 'normal', cursor: 'pointer' }}>
-                                            <input type="radio" name="acoplamento" value="SIM" checked={fixedData.acoplamento_polia === 'SIM'} onChange={e => setFixedData({ ...fixedData, acoplamento_polia: e.target.value })} style={{ width: '20px', height: '20px' }} />
-                                            Sim
-                                        </label>
-                                        <label style={{ display: 'flex', alignItems: 'center', gap: '5px', fontWeight: 'normal', cursor: 'pointer' }}>
-                                            <input type="radio" name="acoplamento" value="NÃO" checked={fixedData.acoplamento_polia === 'NÃO'} onChange={e => setFixedData({ ...fixedData, acoplamento_polia: e.target.value })} style={{ width: '20px', height: '20px' }} />
-                                            Não
-                                        </label>
-                                    </div>
-                                </div>
-
-                                <div className="form-group full-row">
-                                    <label style={{ fontWeight: 'bold' }}>RECEBIDO COM SISTEMA DE LUBRIFICAÇÃO?</label>
-                                    <div style={{ display: 'flex', gap: '15px', marginTop: '5px' }}>
-                                        <label style={{ display: 'flex', alignItems: 'center', gap: '5px', fontWeight: 'normal', cursor: 'pointer' }}>
-                                            <input type="radio" name="sistema_lub" value="SIM" checked={fixedData.sistema_lubrificacao === 'SIM'} onChange={e => setFixedData({ ...fixedData, sistema_lubrificacao: e.target.value })} style={{ width: '20px', height: '20px' }} />
-                                            Sim
-                                        </label>
-                                        <label style={{ display: 'flex', alignItems: 'center', gap: '5px', fontWeight: 'normal', cursor: 'pointer' }}>
-                                            <input type="radio" name="sistema_lub" value="NÃO" checked={fixedData.sistema_lubrificacao === 'NÃO'} onChange={e => setFixedData({ ...fixedData, sistema_lubrificacao: e.target.value })} style={{ width: '20px', height: '20px' }} />
-                                            Não
-                                        </label>
-                                    </div>
-                                </div>
-
-                                <div className="form-group full-row">
-                                    <label style={{ fontWeight: 'bold' }}>OUTROS ( ESPECIFICAR ):</label>
-                                    <input
-                                        placeholder="Outros detalhes..."
-                                        value={fixedData.outros_especificar}
-                                        onChange={e => setFixedData({ ...fixedData, outros_especificar: e.target.value.toUpperCase() })}
-                                        style={{ width: '100%', borderBottom: '1px solid #000', borderRadius: 0, padding: '8px 5px' }}
-                                    />
-                                </div>
-
-                                <div className="form-group full-row">
-                                    <label style={{ fontWeight: 'bold' }}>OUTRAS OBSERVAÇÕES:</label>
-                                    <textarea
-                                        style={{ width: '100%', minHeight: '80px', padding: '10px', borderRadius: '8px', border: '2px solid #f1f3f5' }}
-                                        placeholder="Observações complementares..."
-                                        value={fixedData.observacoes_gerais}
-                                        onChange={e => setFixedData({ ...fixedData, observacoes_gerais: e.target.value.toUpperCase() })}
-                                    />
-                                </div>
-                            </div>
-                        )}
+                    <div className="info-grid">
+                        <div className="form-group">
+                            <label>FABRICANTE</label>
+                            <input placeholder="Fabricante Original" value={fixedData.fabricante} onChange={e => setFixedData({...fixedData, fabricante: e.target.value.toUpperCase()})} />
+                        </div>
+                        <div className="form-group">
+                            <label>MODELO / SÉRIE</label>
+                            <input placeholder="Modelo / N° da Peça" value={fixedData.tipo_modelo} onChange={e => setFixedData({...fixedData, tipo_modelo: e.target.value.toUpperCase()})} />
+                        </div>
+                        <div className="form-group">
+                            <label>DESENHO DE REFERÊNCIA</label>
+                            <input placeholder="N° do Desenho" value={fixedData.desenho_conjunto} onChange={e => setFixedData({...fixedData, desenho_conjunto: e.target.value.toUpperCase()})} />
+                        </div>
+                         <div className="form-group">
+                            <label>NI (NOTA DE INSPEÇÃO)</label>
+                            <input placeholder="NI de Referência" value={fixedData.ni} onChange={e => setFixedData({...fixedData, ni: e.target.value.toUpperCase()})} />
+                        </div>
                     </div>
                 </section>
 
-                {/* DIMENSÕES */}
-                <section className="form-card dimensions-section">
+                <section className="form-card">
                     <div className="card-header">
-                        {renderIndicator(dimStatus)}
-                        <h3>Dimensões do Cilindro</h3>
-
+                        <Info size={24} color="var(--primary)" />
+                        <div className="header-titles">
+                            <h3>CARACTERÍSTICAS DIMENSIONAIS</h3>
+                            <span className="subtitle">Especificações de Projeto (Medidas Nominais)</span>
+                        </div>
                     </div>
-                    <div className="dimensions-horizontal-grid">
-                        <div className="dim-group-main">
-                            <span className="dim-label">DIMENSÕES:</span>
-                            <div className="dim-fields-wrapper">
-                                <div className="dim-part">
-                                    <span>CAMISA ØINT.</span>
-                                    <input placeholder="ØINT" value={dimensions.diametroInterno} onChange={e => { setDimensions({ ...dimensions, diametroInterno: e.target.value }); setDimStatus('verde'); }} className="dim-input-mini" />
-                                    <span>x Ø EXT.</span>
-                                    <input placeholder="ØEXT" value={dimensions.diametroExterno} onChange={e => { setDimensions({ ...dimensions, diametroExterno: e.target.value }); setDimStatus('verde'); }} className="dim-input-mini" />
-                                    <span>X COMP.</span>
-                                    <input placeholder="COMP" value={dimensions.comprimentoTotal} onChange={e => { setDimensions({ ...dimensions, comprimentoTotal: e.target.value }); setDimStatus('verde'); }} className="dim-input-mini" />
-                                </div>
-                                <div className="dim-part divider-left">
-                                    <span>/ HASTE Ø</span>
-                                    <input placeholder="Ø" value={dimensions.diametroHaste} onChange={e => { setDimensions({ ...dimensions, diametroHaste: e.target.value }); setDimStatus('verde'); }} className="dim-input-mini" />
-                                    <span>X COMP.</span>
-                                    <input placeholder="COMP" value={dimensions.comprimentoHaste} onChange={e => { setDimensions({ ...dimensions, comprimentoHaste: e.target.value }); setDimStatus('verde'); }} className="dim-input-mini" />
-                                </div>
-                                <div className="dim-part divider-left">
-                                    <span>/ CURSO:</span>
-                                    <input placeholder="CURSO" value={dimensions.curso} onChange={e => { setDimensions({ ...dimensions, curso: e.target.value }); setDimStatus('verde'); }} className="dim-input-medium" />
-                                    <span>MM</span>
-                                </div>
-                            </div>
+
+                    <div className="info-grid">
+                        <div className="form-group">
+                            <label>DIÂMETRO INTERNO (mm)</label>
+                            <input type="text" placeholder="Ø Interno" value={dimensions.diametroInterno} onChange={e => setDimensions({...dimensions, diametroInterno: e.target.value.toUpperCase()})} />
+                        </div>
+                        <div className="form-group">
+                            <label>DIÂMETRO HASTE (mm)</label>
+                            <input type="text" placeholder="Ø Haste" value={dimensions.diametroHaste} onChange={e => setDimensions({...dimensions, diametroHaste: e.target.value.toUpperCase()})} />
+                        </div>
+                        <div className="form-group">
+                            <label>CURSO ÚTIL (mm)</label>
+                            <input type="text" placeholder="Curso" value={dimensions.curso} onChange={e => setDimensions({...dimensions, curso: e.target.value.toUpperCase()})} />
+                        </div>
+                        <div className="form-group">
+                            <label>COMPRIMENTO FECHADO (mm)</label>
+                            <input type="text" placeholder="Comp. Fechado" value={dimensions.comprimentoTotal} onChange={e => setDimensions({...dimensions, comprimentoTotal: e.target.value.toUpperCase()})} />
+                        </div>
+                        <div className="form-group">
+                            <label>PRESSÃO NOMINAL (bar)</label>
+                            <input type="text" placeholder="Pressão" value={dimensions.pressaoNominal} onChange={e => setDimensions({...dimensions, pressaoNominal: e.target.value.toUpperCase()})} />
+                        </div>
+                        <div className="form-group">
+                            <label>TIPO DE MONTAGEM</label>
+                            <select value={dimensions.montagem} onChange={e => setDimensions({...dimensions, montagem: e.target.value})}>
+                                <option value="">Selecione...</option>
+                                <option value="FLANGE">FLANGE</option>
+                                <option value="MUNHÃO">MUNHÃO</option>
+                                <option value="OLHAL">OLHAL</option>
+                                <option value="PÉ">PÉ / FIXAÇÃO BASE</option>
+                                <option value="OUTROS">OUTROS</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div className="form-section-title">PARÂMETROS DE RECEBIMENTO</div>
+                    <div className="info-grid">
+                        <div className="form-group">
+                            <label>FLUIDO / LUBRIFICANTE</label>
+                            <input placeholder="Ex: ISO VG 68" value={fixedData.lubrificante} onChange={e => setFixedData({...fixedData, lubrificante: e.target.value.toUpperCase()})} />
+                        </div>
+                        <div className="form-group">
+                            <label>VOLUME DE ÓLEO (L)</label>
+                            <input placeholder="Capacidade" value={fixedData.volume} onChange={e => setFixedData({...fixedData, volume: e.target.value.toUpperCase()})} />
+                        </div>
+                        <div className="form-group">
+                            <label>ENTREGA COM ACOPLAMENTO / POLIA?</label>
+                            <select value={fixedData.acoplamento_polia} onChange={e => setFixedData({...fixedData, acoplamento_polia: e.target.value})}>
+                                <option value="">-</option>
+                                <option value="SIM">SIM</option>
+                                <option value="NÃO">NÃO</option>
+                            </select>
+                        </div>
+                        <div className="form-group">
+                            <label>SISTEMA DE LUBRIFICAÇÃO INTEGRADO?</label>
+                            <select value={fixedData.sistema_lubrificacao} onChange={e => setFixedData({...fixedData, sistema_lubrificacao: e.target.value})}>
+                                <option value="">-</option>
+                                <option value="SIM">SIM</option>
+                                <option value="NÃO">NÃO</option>
+                            </select>
                         </div>
                     </div>
                 </section>

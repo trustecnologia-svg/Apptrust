@@ -10,11 +10,11 @@ import {
     CheckCircle,
     ShoppingCart,
     ClipboardSignature,
-    QrCode,
     Building2,
     Book,
     Clock,
     RefreshCcw,
+    Activity,
     Folder
 } from 'lucide-react';
 import { NavLink, useNavigate, useLocation } from 'react-router-dom';
@@ -183,12 +183,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen = false, onClose }) => 
                             <span>Databook</span>
                         </NavLink>
                         <NavLink to="/workflow" onClick={handleLinkClick} className={({ isActive }) => isActive ? 'nav-item active' : 'nav-item'}>
-                            <RefreshCcw size={20} />
-                            <span>Fluxo de QR code</span>
-                        </NavLink>
-                        <NavLink to="/qrcode" onClick={handleLinkClick} className={({ isActive }) => isActive ? 'nav-item active' : 'nav-item'}>
-                            <QrCode size={20} />
-                            <span>Gerar QR code</span>
+                            <Activity size={20} />
+                            <span>Fluxo de Produção</span>
                         </NavLink>
                     </>
                 )}
@@ -209,7 +205,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen = false, onClose }) => 
                             <span>Cilindros em Manutenção</span>
                         </NavLink>
                         <NavLink to="/workflow#etapa2" onClick={handleLinkClick} className={({ isActive }) => isActive ? 'nav-item active' : 'nav-item'}>
-                            <RefreshCcw size={20} />
+                            <Activity size={20} />
                             <span>2. Montagem & Recuperação</span>
                         </NavLink>
                     </>
@@ -237,7 +233,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen = false, onClose }) => 
                 {role === 'qualidade' && (
                     <>
                         <NavLink to="/workflow" onClick={handleLinkClick} className={({ isActive }) => isActive ? 'nav-item active' : 'nav-item'}>
-                            <RefreshCcw size={20} />
+                            <Activity size={20} />
                             <span>Teste de Qualidade</span>
                         </NavLink>
                         <NavLink to="/pcp/finalizar" onClick={handleLinkClick} className={({ isActive }) => isActive ? 'nav-item active' : 'nav-item'}>
@@ -309,12 +305,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen = false, onClose }) => 
                             <span>Databook</span>
                         </NavLink>
                         <NavLink to="/workflow" onClick={handleLinkClick} className={({ isActive }) => isActive ? 'nav-item active' : 'nav-item'}>
-                            <RefreshCcw size={20} />
-                            <span>Fluxo de QR code</span>
-                        </NavLink>
-                        <NavLink to="/qrcode" onClick={handleLinkClick} className={({ isActive }) => isActive ? 'nav-item active' : 'nav-item'}>
-                            <QrCode size={20} />
-                            <span>Gerar QR code</span>
+                            <Activity size={20} />
+                            <span>Fluxo de Produção</span>
                         </NavLink>
                         <NavLink to="/admin/usuarios" onClick={handleLinkClick} className={({ isActive }) => isActive ? 'nav-item active' : 'nav-item'}>
                             <Settings size={20} />

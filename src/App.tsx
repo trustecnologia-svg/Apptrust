@@ -19,12 +19,10 @@ const PcpFinalizaProcesso = React.lazy(() => import('./pages/PcpFinalizaProcesso
 const RegistroFotos = React.lazy(() => import('./pages/RegistroFotos').then(module => ({ default: module.RegistroFotos })));
 const AdminUsers = React.lazy(() => import('./pages/AdminUsers').then(module => ({ default: module.AdminUsers })));
 const AdminEmpresas = React.lazy(() => import('./pages/AdminEmpresas').then(module => ({ default: module.AdminEmpresas })));
-const QrCodePage = React.lazy(() => import('./pages/QrCodePage').then(module => ({ default: module.QrCodePage })));
 const ClientPeritagens = React.lazy(() => import('./pages/ClientPeritagens').then(module => ({ default: module.ClientPeritagens })));
 const DataBook = React.lazy(() => import('./pages/DataBook').then(module => ({ default: module.DataBook })));
 const AguardandoPeritagem = React.lazy(() => import('./pages/AguardandoPeritagem').then(module => ({ default: module.AguardandoPeritagem })));
 const PendingApproval = React.lazy(() => import('./pages/PendingApproval').then(module => ({ default: module.PendingApproval })));
-const PublicReport = React.lazy(() => import('./pages/PublicReport').then(module => ({ default: module.PublicReport })));
 const WorkflowPage = React.lazy(() => import('./pages/Workflow').then(module => ({ default: module.WorkflowPage })));
 
 const LoadingSpinner = () => (
@@ -106,8 +104,6 @@ function AppRoutes() {
         <Route path="/register" element={session ? <Navigate to={defaultPath} /> : <RegisterPage />} />
         <Route path="/pending-approval" element={session ? (status === 'APROVADO' ? <Navigate to={defaultPath} /> : <PendingApproval />) : <Navigate to="/login" />} />
 
-        {/* Rota Pública para QR Code */}
-        <Route path="/view-report/:id" element={<PublicReport />} />
 
         <Route path="/" element={<Navigate to={session ? defaultPath : "/login"} replace />} />
 
@@ -130,7 +126,6 @@ function AppRoutes() {
         <Route path="/pcp/aprovar" element={<PrivateRoute allowedRoles={['pcp', 'gestor']}><Layout><PcpAprovaPeritagem /></Layout></PrivateRoute>} />
         <Route path="/pcp/liberar" element={<PrivateRoute allowedRoles={['pcp', 'gestor', 'comercial']}><Layout><PcpLiberaPedido /></Layout></PrivateRoute>} />
         <Route path="/pcp/finalizar" element={<PrivateRoute allowedRoles={['pcp', 'gestor', 'qualidade']}><Layout><PcpFinalizaProcesso /></Layout></PrivateRoute>} />
-        <Route path="/qrcode" element={<PrivateRoute allowedRoles={['pcp', 'gestor', 'perito', 'comercial']}><Layout><QrCodePage /></Layout></PrivateRoute>} />
 
         {/* Rota Exclusiva Gestor */}
         <Route path="/admin/usuarios" element={

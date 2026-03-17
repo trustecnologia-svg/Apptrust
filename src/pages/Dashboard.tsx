@@ -16,21 +16,18 @@ import {
     RadialLinearScale,
     Filler
 } from 'chart.js';
-import { Doughnut, Line, Bar } from 'react-chartjs-2';
+import { Line } from 'react-chartjs-2';
 import {
     FileText,
     Wrench,
     CheckCircle2,
-    Clock,
-    PlusCircle,
-    Activity,
-    ShieldCheck,
-    ClipboardCheck,
     Truck,
-    Factory,
+    ClipboardCheck,
+    Activity,
+    Users,
+    PlusCircle,
     BarChart3,
-    ArrowUpRight,
-    Users
+    ShieldCheck
 } from 'lucide-react';
 import './Dashboard.css';
 
@@ -199,10 +196,10 @@ export const Dashboard: React.FC = () => {
     };
 
     const stats = [
-        { label: 'Recebimento', subLabel: 'Portaria / Inbound', value: counts.aguardandoPeritagem, icon: <Truck size={22} />, color: '#3b82f6', link: '/pcp/aguardando' },
+        { label: 'Recebimento', subLabel: 'Portaria / Entrada', value: counts.aguardandoPeritagem, icon: <Truck size={22} />, color: '#3b82f6', link: '/pcp/aguardando' },
         { label: 'Peritagem', subLabel: 'Análise Técnica', value: counts.emPeritagem, icon: <ClipboardCheck size={22} />, color: '#8b5cf6', link: '/peritagens?status=peritagem' },
         { label: 'Orçamento', subLabel: 'Aprovação Cliente', value: counts.aguardandoCliente, icon: <FileText size={22} />, color: '#f59e0b', link: '/pcp/liberar' },
-        { label: 'Workshop', subLabel: 'Em Manutenção', value: counts.manutencao, icon: <Wrench size={22} />, color: '#10b981', link: '/manutencao' },
+        { label: 'Oficina', subLabel: 'Em Manutenção', value: counts.manutencao, icon: <Wrench size={22} />, color: '#10b981', link: '/manutencao' },
         { label: 'Logística', subLabel: 'Pronto p/ Entrega', value: counts.finalizados, icon: <CheckCircle2 size={22} />, color: '#059669', link: '/peritagens?status=finalizados' },
     ];
 
@@ -210,7 +207,7 @@ export const Dashboard: React.FC = () => {
         <div className="dashboard-container industrial-theme" id="dashboard-page">
             <header className="dashboard-header-v4">
                 <div className="header-main">
-                    <div className="brand-pill">OPERATIONS HUB</div>
+                    <div className="brand-pill">CENTRO DE OPERAÇÕES</div>
                     <h1>Painel de Controle de Peritagem</h1>
                     <p>Trust Tecnologia - Monitoramento Inteligente de Manutenção Industrial</p>
                 </div>
@@ -277,7 +274,7 @@ export const Dashboard: React.FC = () => {
                         <div className="data-card-v4 analytics">
                             <div className="card-header-v4">
                                 <BarChart3 size={18} />
-                                <h3>Tempo Médio de Ciclo (Lead Time)</h3>
+                                <h3>Tempo Médio de Ciclo</h3>
                             </div>
                             <div className="analytics-body">
                                 <div className="lead-time-display">

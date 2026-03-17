@@ -282,7 +282,7 @@ export const Peritagens: React.FC = () => {
 
                 {!loading && errorMsg && (
                     <div style={{ textAlign: 'center', padding: '3rem', color: '#ef4444', gridColumn: '1 / -1' }}>
-                        Error ao carregar {errorMsg}.
+                        Erro ao carregar {errorMsg}.
                     </div>
                 )}
 

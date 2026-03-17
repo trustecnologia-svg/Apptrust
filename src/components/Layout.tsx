@@ -14,7 +14,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
     const location = useLocation();
 
     // Hide back button on main landing pages to avoid confusion
-    const isMainPage = ['/dashboard', '/meus-relatorios', '/pcp/aguardando'].includes(location.pathname);
+    const isMainPage = ['/dashboard', '/meus-relatorios', '/pcp/aguardando', '/nova-peritagem'].includes(location.pathname);
 
     return (
         <div className="layout-root">
