@@ -97,7 +97,7 @@ export const Peritagens: React.FC = () => {
 
             // REGRAS PARA APP ANDROID: Qualquer usuário logado no app só vê as suas peritagens
             const isAndroidApp = window.location.hostname === 'localhost' || window.location.protocol === 'file:';
-            if (isAndroidApp && role !== 'gestor' && role !== 'pcp' && user) {
+            if (isAndroidApp && !['gestor', 'pcp', 'Programador'].includes(role || '') && user) {
                 query = query.eq('criado_por', user.id);
             }
 
@@ -209,7 +209,7 @@ export const Peritagens: React.FC = () => {
                             return (
                                 <div key={p.id} className="peritagem-card">
                                     <div className="card-top-tag">
-                                        <span className="os-label">ID: {p.os_interna || 'P-TAG-00'}</span>
+                                        <span className="os-label">ID: {p.os_interna || p.numero_peritagem || 'S/OS'}</span>
                                         <span className={`status-pill ${getStatusColorClass(p.status)}`}>
                                             {p.status}
                                         </span>
@@ -265,7 +265,7 @@ export const Peritagens: React.FC = () => {
                                             {canEdit ? (isRejection ? 'REVISAR' : 'GERENCIAR') : 'VISUALIZAR'}
                                         </button>
 
-                                        {role === 'gestor' && (
+                                        {(role === 'gestor' || role === 'Programador') && (
                                             <button
                                                 className="btn-ind btn-ind-outline btn-ind-danger"
                                                 onClick={() => handleDelete(p.id)}

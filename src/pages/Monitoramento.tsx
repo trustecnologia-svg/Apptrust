@@ -82,11 +82,11 @@ const ETAPAS = [
 
 const getEtapaIndex = (status: string) => {
     const s = (status || "").toUpperCase();
-    if (s === 'PERITAGEM CRIADA' || s === 'REVISÃO NECESSÁRIA') return 1;
+    if (s === 'PERITAGEM CRIADA' || s === 'REVISÃO NECESSÁRIA' || s === 'EM PERITAGEM') return 1;
     if (s === 'AGUARDANDO APROVAÇÃO DO PCP' || s === 'PERITAGEM FINALIZADA' || s === 'AGUARDANDO PCP') return 2;
-    if (s === 'AGUARDANDO APROVAÇÃO DO CLIENTE' || s === 'AGUARDANDO CLIENTES' || s === 'AGUARDANDO ORÇAMENTO' || s === 'AGUARDANDO APROVAÇÃO DE ORÇAMENTO') return 3;
-    if (s === 'EM MANUTENÇÃO' || s === 'CILINDROS EM MANUTENÇÃO' || s === 'CILINDRO EM MANUTENÇÃO') return 4;
-    if (s === 'AGUARDANDO CONFERÊNCIA FINAL') return 5;
+    if (s === 'AGUARDANDO APROVAÇÃO DO CLIENTE' || s === 'AGUARDANDO CLIENTES' || s === 'AGUARDANDO ORÇAMENTO' || s === 'AGUARDANDO APROVAÇÃO DE ORÇAMENTO' || s === 'ORÇAMENTO ENVIADO') return 3;
+    if (s === 'EM MANUTENÇÃO' || s === 'CILINDROS EM MANUTENÇÃO' || s === 'CILINDRO EM MANUTENÇÃO' || s === 'AGUARDANDO COMPRAS' || s === 'OS EM ABERTO') return 4;
+    if (s === 'AGUARDANDO CONFERÊNCIA FINAL' || s === 'CONFERÊNCIA FINAL') return 5;
     if (s === 'PROCESSO FINALIZADO' || s === 'FINALIZADOS' || s === 'FINALIZADO' || s === 'FINALIZADA') return 6;
     return 1;
 };
@@ -289,13 +289,13 @@ export const Monitoramento: React.FC = () => {
         const status = (p.statusTexto || "").toUpperCase();
 
         if (filterParams === 'pcp') {
-            return matchesSearch && (status === 'PERITAGEM CRIADA' || status === 'AGUARDANDO APROVAÇÃO DO PCP');
+            return matchesSearch && (status === 'PERITAGEM CRIADA' || status === 'AGUARDANDO APROVAÇÃO DO PCP' || status === 'PERITAGEM FINALIZADA' || status === 'EM PERITAGEM');
         }
         if (filterParams === 'cliente') {
-            return matchesSearch && (status === 'AGUARDANDO APROVAÇÃO DO CLIENTE' || status === 'AGUARDANDO CLIENTES');
+            return matchesSearch && (status === 'AGUARDANDO APROVAÇÃO DO CLIENTE' || status === 'AGUARDANDO CLIENTES' || status === 'ORÇAMENTO ENVIADO' || status === 'AGUARDANDO ORÇAMENTO');
         }
         if (filterParams === 'finalizar') {
-            return matchesSearch && (status === 'EM MANUTENÇÃO' || status === 'CILINDROS EM MANUTENÇÃO' || status === 'AGUARDANDO CONFERÊNCIA FINAL');
+            return matchesSearch && (status === 'EM MANUTENÇÃO' || status === 'CILINDROS EM MANUTENÇÃO' || status === 'AGUARDANDO CONFERÊNCIA FINAL' || status === 'AGUARDANDO COMPRAS' || status === 'CILINDRO EM MANUTENÇÃO');
         }
 
         return matchesSearch;
@@ -539,7 +539,7 @@ export const Monitoramento: React.FC = () => {
                 ) : (
                     <>
                         {filteredProcessos.map(processo => {
-                            const showActions = (role === 'pcp' || role === 'gestor' || role === 'perito');
+                            const showActions = (role === 'pcp' || role === 'gestor' || role === 'perito' || role === 'Programador');
                             const isPcpAwaiting = processo.statusTexto === 'PERITAGEM CRIADA' || processo.statusTexto === 'AGUARDANDO APROVAÇÃO DO PCP';
                             const isClientAwaiting = processo.statusTexto === 'AGUARDANDO APROVAÇÃO DO CLIENTE' || processo.statusTexto === 'AGUARDANDO CLIENTES';
                             const isMaintenance = processo.statusTexto === 'EM MANUTENÇÃO' || processo.statusTexto === 'CILINDROS EM MANUTENÇÃO';

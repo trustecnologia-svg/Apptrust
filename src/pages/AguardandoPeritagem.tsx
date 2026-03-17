@@ -135,7 +135,7 @@ export const AguardandoPeritagem: React.FC = () => {
                     <h1>Aguardando Peritagem</h1>
                     <p>Fila de entrada de equipamentos para verificação técnica</p>
                 </div>
-                {(role === 'pcp' || role === 'gestor') ? (
+                {(role === 'pcp' || role === 'gestor' || role === 'Programador') ? (
                     <button className="ind-btn ind-btn-primary" onClick={() => setShowForm(true)}>
                         <Plus size={20} />
                         <span>Novo Item</span>
@@ -354,7 +354,7 @@ export const AguardandoPeritagem: React.FC = () => {
                                     <ClipboardSignature size={18} />
                                     <span>Iniciar Laudo</span>
                                 </button>
-                                {(role === 'pcp' || role === 'gestor') && (
+                                {(role === 'pcp' || role === 'gestor' || role === 'Programador') && (
                                     <button
                                         className="ind-btn ind-btn-danger"
                                         style={{ flex: '0 0 50px' }}

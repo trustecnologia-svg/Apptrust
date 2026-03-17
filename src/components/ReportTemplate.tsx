@@ -66,7 +66,6 @@ const styles = StyleSheet.create({
     coverDetails: {
         width: '100%',
         alignItems: 'center',
-        gap: 15
     },
     coverDetailItem: {
         alignItems: 'center',
@@ -154,10 +153,10 @@ const styles = StyleSheet.create({
         padding: 4,
         alignItems: 'center'
     },
-    colNo: { width: '5%', textAlign: 'center' },
-    colDesc: { width: '42%' },
-    colX: { width: '20%', textAlign: 'center' }, // Largura para "NÃO CONFORME"
-    colQtd: { width: '8%', textAlign: 'center' },
+    colNo: { width: '6%', textAlign: 'center' },
+    colDesc: { width: '58%' },
+    colX: { width: '22%', textAlign: 'center' }, 
+    colQtd: { width: '14%', textAlign: 'center' },
     colDim: { width: '25%' },
 
     technicalOpinion: {
@@ -185,11 +184,11 @@ const styles = StyleSheet.create({
     },
     analysisRow: {
         flexDirection: 'row',
-        gap: 10,
         marginBottom: 8,
     },
     analysisField: {
         flex: 1,
+        marginRight: 10,
     },
     analysisLabel: {
         fontSize: 7,
@@ -221,11 +220,16 @@ const styles = StyleSheet.create({
     photoGrid: {
         flexDirection: 'row',
         flexWrap: 'wrap',
-        gap: 5,
         marginTop: 5,
     },
-    photoContainer: {
+    photoWrapper: {
         width: '48%',
+        margin: '1%',
+        height: 180,
+    },
+    photoContainer: {
+        width: '49%',
+        margin: '0.5%',
         height: 180,
         borderWidth: 1,
         borderColor: '#eee',
@@ -372,43 +376,37 @@ export const ReportTemplate: React.FC<{ data: ReportData }> = ({ data }) => (
                     </View>
 
                     {/* Grid de 2 Colunas - Somente campos preenchidos */}
-                    <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
+                    <View style={{ flexDirection: 'row' }}>
                         {/* Coluna 1 */}
                         <View style={{ width: '50%', paddingRight: 10 }}>
                             {hasValue(data.numero_os) && (
-                                <View style={{ marginBottom: 8 }}>
-                                    <Text style={{ fontSize: 8, fontWeight: 'bold', color: '#555', marginBottom: 2 }}>ORDEM DE SERVIÇO:</Text>
+                                <View style={{ marginBottom: 6 }}>
+                                    <Text style={{ fontSize: 8, fontWeight: 'bold', color: '#555', marginBottom: 1 }}>ORDEM DE SERVIÇO:</Text>
                                     <Text style={{ fontSize: 9 }}>{(data.numero_os && (!data.numero_os.startsWith('S/OS-') || data.numero_os.length < 15)) ? data.numero_os : 'NÃO INFORMADA'}</Text>
                                 </View>
                             )}
                             {hasValue(data.ni) && (
-                                <View style={{ marginBottom: 8 }}>
-                                    <Text style={{ fontSize: 8, fontWeight: 'bold', color: '#555', marginBottom: 2 }}>NI:</Text>
+                                <View style={{ marginBottom: 6 }}>
+                                    <Text style={{ fontSize: 8, fontWeight: 'bold', color: '#555', marginBottom: 1 }}>NI:</Text>
                                     <Text style={{ fontSize: 9 }}>{data.ni}</Text>
                                 </View>
                             )}
                             {hasValue(data.tipo_modelo) && (
-                                <View style={{ marginBottom: 8 }}>
-                                    <Text style={{ fontSize: 8, fontWeight: 'bold', color: '#555', marginBottom: 2 }}>TIPO/ MODELO:</Text>
+                                <View style={{ marginBottom: 6 }}>
+                                    <Text style={{ fontSize: 8, fontWeight: 'bold', color: '#555', marginBottom: 1 }}>TIPO/ MODELO:</Text>
                                     <Text style={{ fontSize: 9 }}>{data.tipo_modelo}</Text>
                                 </View>
                             )}
                             {hasValue(data.lubrificante) && (
-                                <View style={{ marginBottom: 8 }}>
-                                    <Text style={{ fontSize: 8, fontWeight: 'bold', color: '#555', marginBottom: 2 }}>LUBRIFICANTE:</Text>
+                                <View style={{ marginBottom: 6 }}>
+                                    <Text style={{ fontSize: 8, fontWeight: 'bold', color: '#555', marginBottom: 1 }}>LUBRIFICANTE:</Text>
                                     <Text style={{ fontSize: 9 }}>{data.lubrificante}</Text>
                                 </View>
                             )}
                             {hasValue(data.acoplamento_polia) && (
-                                <View style={{ marginBottom: 8 }}>
-                                    <Text style={{ fontSize: 8, fontWeight: 'bold', color: '#555', marginBottom: 2 }}>ACOPLAMENTO / POLIA:</Text>
+                                <View style={{ marginBottom: 6 }}>
+                                    <Text style={{ fontSize: 8, fontWeight: 'bold', color: '#555', marginBottom: 1 }}>ACOPLAMENTO / POLIA:</Text>
                                     <Text style={{ fontSize: 9 }}>{data.acoplamento_polia}</Text>
-                                </View>
-                            )}
-                            {hasValue(data.outros_especificar) && (
-                                <View style={{ marginBottom: 8 }}>
-                                    <Text style={{ fontSize: 8, fontWeight: 'bold', color: '#555', marginBottom: 2 }}>OUTROS:</Text>
-                                    <Text style={{ fontSize: 9 }}>{data.outros_especificar}</Text>
                                 </View>
                             )}
                         </View>
@@ -416,38 +414,32 @@ export const ReportTemplate: React.FC<{ data: ReportData }> = ({ data }) => (
                         {/* Coluna 2 */}
                         <View style={{ width: '50%', paddingLeft: 10 }}>
                             {hasValue(data.nota_fiscal) && (
-                                <View style={{ marginBottom: 8 }}>
-                                    <Text style={{ fontSize: 8, fontWeight: 'bold', color: '#555', marginBottom: 2 }}>NF:</Text>
+                                <View style={{ marginBottom: 6 }}>
+                                    <Text style={{ fontSize: 8, fontWeight: 'bold', color: '#555', marginBottom: 1 }}>NF:</Text>
                                     <Text style={{ fontSize: 9 }}>{data.nota_fiscal}</Text>
                                 </View>
                             )}
                             {hasValue(data.desenho_conjunto) && (
-                                <View style={{ marginBottom: 8 }}>
-                                    <Text style={{ fontSize: 8, fontWeight: 'bold', color: '#555', marginBottom: 2 }}>DESENHO:</Text>
+                                <View style={{ marginBottom: 6 }}>
+                                    <Text style={{ fontSize: 8, fontWeight: 'bold', color: '#555', marginBottom: 1 }}>DESENHO:</Text>
                                     <Text style={{ fontSize: 9 }}>{data.desenho_conjunto}</Text>
                                 </View>
                             )}
                             {hasValue(data.fabricante) && (
-                                <View style={{ marginBottom: 8 }}>
-                                    <Text style={{ fontSize: 8, fontWeight: 'bold', color: '#555', marginBottom: 2 }}>FABRICANTE:</Text>
+                                <View style={{ marginBottom: 6 }}>
+                                    <Text style={{ fontSize: 8, fontWeight: 'bold', color: '#555', marginBottom: 1 }}>FABRICANTE:</Text>
                                     <Text style={{ fontSize: 9 }}>{data.fabricante}</Text>
                                 </View>
                             )}
-                            {hasValue(data.volume) && (
-                                <View style={{ marginBottom: 8 }}>
-                                    <Text style={{ fontSize: 8, fontWeight: 'bold', color: '#555', marginBottom: 2 }}>VOLUME:</Text>
-                                    <Text style={{ fontSize: 9 }}>{data.volume}</Text>
-                                </View>
-                            )}
                             {hasValue(data.sistema_lubrificacao) && (
-                                <View style={{ marginBottom: 8 }}>
-                                    <Text style={{ fontSize: 8, fontWeight: 'bold', color: '#555', marginBottom: 2 }}>SISTEMA DE LUBRIFICAÇÃO:</Text>
+                                <View style={{ marginBottom: 6 }}>
+                                    <Text style={{ fontSize: 8, fontWeight: 'bold', color: '#555', marginBottom: 1 }}>SISTEMA DE LUBRIFICAÇÃO:</Text>
                                     <Text style={{ fontSize: 9 }}>{data.sistema_lubrificacao}</Text>
                                 </View>
                             )}
                             {hasValue(data.observacoes_gerais) && (
-                                <View style={{ marginBottom: 8 }}>
-                                    <Text style={{ fontSize: 8, fontWeight: 'bold', color: '#555', marginBottom: 2 }}>OBSERVAÇÕES:</Text>
+                                <View style={{ marginBottom: 6 }}>
+                                    <Text style={{ fontSize: 8, fontWeight: 'bold', color: '#555', marginBottom: 1 }}>OBSERVAÇÕES:</Text>
                                     <Text style={{ fontSize: 9 }}>{data.observacoes_gerais}</Text>
                                 </View>
                             )}
@@ -463,21 +455,21 @@ export const ReportTemplate: React.FC<{ data: ReportData }> = ({ data }) => (
                     <Text style={{ fontSize: 10, fontWeight: 'bold', color: '#fff' }}>DIMENSÕES TÉCNICAS (MM)</Text>
                 </View>
                 {/* Layout Stacked para evitar sobreposição */}
-                <View style={{ padding: 4 }}>
-                    <View style={{ flexDirection: 'row', justifyContent: 'flex-start', marginBottom: 2 }}>
-                        <Text style={{ fontSize: 9, marginRight: 30 }}>
+                <View style={{ padding: 4, flexDirection: 'row' }}>
+                    <View style={{ width: '65%' }}>
+                        <Text style={{ fontSize: 9 }}>
                             <Text style={{ fontWeight: 'bold' }}>CAMISA: </Text>
                             Ø INT. {formatDim(data.camisa_int)} x Ø EXT. {formatDim(data.camisa_ext)} x COMP. {formatDim(data.camisa_comp)}
                         </Text>
+                        <Text style={{ fontSize: 9, marginTop: 4 }}>
+                            <Text style={{ fontWeight: 'bold' }}>CURSO: </Text>
+                            {formatDim(data.curso)}
+                        </Text>
+                    </View>
+                    <View style={{ width: '35%' }}>
                         <Text style={{ fontSize: 9 }}>
                             <Text style={{ fontWeight: 'bold' }}>HASTE: </Text>
                             Ø {formatDim(data.haste_diam)} x COMP. {formatDim(data.haste_comp)}
-                        </Text>
-                    </View>
-                    <View style={{ marginTop: 0 }}>
-                        <Text style={{ fontSize: 9 }}>
-                            <Text style={{ fontWeight: 'bold' }}>CURSO: </Text>
-                            {formatDim(data.curso)}
                         </Text>
                     </View>
                 </View>
@@ -490,14 +482,14 @@ export const ReportTemplate: React.FC<{ data: ReportData }> = ({ data }) => (
             <View style={styles.table} wrap={false}>
                 <View style={styles.tableHeader}>
                     <Text style={styles.colNo}>N°</Text>
-                    <Text style={{ width: '67%' }}>DESCRIÇÃO DE PEÇA/SERVIÇO</Text>
+                    <Text style={styles.colDesc}>DESCRIÇÃO DE PEÇA/SERVIÇO</Text>
                     <Text style={styles.colX}>X</Text>
                     <Text style={styles.colQtd}>QTD</Text>
                 </View>
                 {data.items.map((item, index) => (
-                    <View key={index} style={styles.tableRow} wrap={false}>
+                    <View key={index} style={[styles.tableRow, { alignItems: 'flex-start' }]} wrap={false}>
                         <Text style={styles.colNo}>{index + 1}</Text>
-                        <Text style={{ width: '67%' }} hyphenationCallback={(word) => [word]}>{item.descricao}</Text>
+                        <Text style={styles.colDesc}>{item.descricao}</Text>
                         <Text style={[styles.colX, {
                             color: item.selecionado ? '#e67e22' : '#27ae60',
                             fontSize: item.selecionado ? 7 : 7,
@@ -630,14 +622,14 @@ export const ReportTemplate: React.FC<{ data: ReportData }> = ({ data }) => (
                                         </View>
                                     </View>
                                 )}
-                                <View style={styles.analysisRow}>
-                                    <View style={styles.analysisField}>
+                                <View style={{ marginBottom: 8 }}>
+                                    <View style={{ width: '100%', marginBottom: 6 }}>
                                         <Text style={styles.analysisLabel}>Anomalia Encontrada</Text>
-                                        <Text style={[styles.analysisValue, { minHeight: 30 }]}>{item.anomalias || '-'}</Text>
+                                        <Text style={[styles.analysisValue, { minHeight: 40 }]}>{item.anomalias || '-'}</Text>
                                     </View>
-                                    <View style={styles.analysisField}>
+                                    <View style={{ width: '100%' }}>
                                         <Text style={styles.analysisLabel}>Solução Recomendada</Text>
-                                        <Text style={[styles.analysisValue, { minHeight: 30 }]}>{item.solucao || '-'}</Text>
+                                        <Text style={[styles.analysisValue, { minHeight: 40 }]}>{item.solucao || '-'}</Text>
                                     </View>
                                 </View>
 

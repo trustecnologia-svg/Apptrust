@@ -3,7 +3,7 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 import type { Session } from '@supabase/supabase-js';
 
-type UserRole = 'perito' | 'pcp' | 'gestor' | 'cliente' | 'montagem' | 'qualidade' | 'comercial' | null;
+type UserRole = 'perito' | 'pcp' | 'gestor' | 'cliente' | 'montagem' | 'qualidade' | 'comercial' | 'Programador' | null;
 
 interface AuthContextType {
     session: Session | null;
@@ -99,7 +99,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         role,
         status,
         loading,
-        isAdmin: ['gestor', 'pcp', 'perito', 'montagem', 'qualidade', 'comercial'].includes(role || '')
+        isAdmin: ['gestor', 'pcp', 'perito', 'montagem', 'qualidade', 'comercial', 'Programador'].includes(role || '')
     };
 
     return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

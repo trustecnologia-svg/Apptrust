@@ -58,6 +58,7 @@ export const NovaPeritagem: React.FC = () => {
     const [searchParams] = useSearchParams();
     const editId = searchParams.get('id');
     const [loading, setLoading] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const [step, setStep] = useState(0); // 0: Seleção, 1: Formulário
     const [editingItemId, setEditingItemId] = useState<string | null>(null);
     const camInputRef = React.useRef<HTMLInputElement>(null);
@@ -598,11 +599,15 @@ export const NovaPeritagem: React.FC = () => {
         e.preventDefault();
         setLoading(true);
 
+        if (isSubmitting) return;
+
         if (!fotoFrontal) {
             alert('A foto frontal do equipamento é obrigatória!');
-            setLoading(false);
             return;
         }
+
+        setIsSubmitting(true);
+        setLoading(true);
 
         // Validação removida a pedido
         /*
@@ -719,7 +724,7 @@ export const NovaPeritagem: React.FC = () => {
                         tipo_modelo: fixedData.tipo_modelo,
                         area: fixedData.area,
                         linha: fixedData.linha,
-                        os_interna: fixedData.os_interna,
+                        os_interna: fixedData.os_interna || numeroPeritagem,
                         etapa_atual: 'peritagem',
                         databook_pronto: false
                     }])
@@ -788,11 +793,13 @@ export const NovaPeritagem: React.FC = () => {
             setChecklistItems(prev => prev.map(item => ({ ...item, status: 'azul' })));
 
             // 3. Atualizar status na tabela 'aguardando_peritagem' se existir
-            if (fixedData.os_interna) {
+            const osForSearch = fixedData.os_interna || (fixedData.numero_os ? fixedData.numero_os.toUpperCase() : null);
+            
+            if (osForSearch) {
                 await supabase
                     .from('aguardando_peritagem')
                     .update({ status: 'PERITADO' })
-                    .eq('os_interna', fixedData.os_interna);
+                    .eq('os_interna', osForSearch);
             }
 
             // 3. Sincronizar Fotos com o Arquivo Geral
@@ -833,6 +840,7 @@ export const NovaPeritagem: React.FC = () => {
             }
         } finally {
             setLoading(false);
+            setIsSubmitting(false);
         }
     };
 

@@ -72,7 +72,8 @@ const PrivateRoute = ({ children, allowedRoles }: { children: React.ReactNode, a
       qualidade: '/pcp/finalizar',
       cliente: '/meus-relatorios',
       pcp: '/dashboard',
-      gestor: '/dashboard'
+      gestor: '/dashboard',
+      Programador: '/dashboard'
     };
     return <Navigate to={redirectMap[role] || "/login"} />;
   }
@@ -92,7 +93,8 @@ function AppRoutes() {
     montagem: "/nova-peritagem",
     comercial: "/nova-peritagem",
     qualidade: "/pcp/finalizar",
-    cliente: "/meus-relatorios"
+    cliente: "/meus-relatorios",
+    Programador: "/dashboard"
   };
 
   const defaultPath = role ? (rolePaths[role] || "/login") : (session ? "/pending-approval" : "/login");
@@ -108,33 +110,33 @@ function AppRoutes() {
         <Route path="/" element={<Navigate to={session ? defaultPath : "/login"} replace />} />
 
         {/* Rotas Protegidas */}
-        <Route path="/dashboard" element={<PrivateRoute allowedRoles={['gestor', 'pcp']}><Layout><Dashboard /></Layout></PrivateRoute>} />
-        <Route path="/peritagens" element={<PrivateRoute allowedRoles={['gestor', 'pcp', 'perito', 'montagem', 'comercial']}><Layout><Peritagens /></Layout></PrivateRoute>} />
-        <Route path="/clientes" element={<PrivateRoute allowedRoles={['gestor', 'pcp']}><Layout><Clientes /></Layout></PrivateRoute>} />
-        <Route path="/manutencao" element={<PrivateRoute allowedRoles={['gestor', 'pcp', 'montagem']}><Layout><Manutencao /></Layout></PrivateRoute>} />
-        <Route path="/relatorios" element={<PrivateRoute allowedRoles={['gestor', 'pcp']}><Layout><Relatorios /></Layout></PrivateRoute>} />
-        <Route path="/registro-fotos" element={<PrivateRoute allowedRoles={['gestor', 'pcp', 'perito', 'montagem', 'qualidade', 'comercial']}><Layout><RegistroFotos /></Layout></PrivateRoute>} />
-        <Route path="/workflow" element={<PrivateRoute allowedRoles={['gestor', 'pcp', 'montagem', 'qualidade']}><Layout><WorkflowPage /></Layout></PrivateRoute>} />
-        <Route path="/nova-peritagem" element={<PrivateRoute allowedRoles={['gestor', 'pcp', 'perito', 'montagem', 'comercial']}><Layout><NovaPeritagem /></Layout></PrivateRoute>} />
-        <Route path="/databook" element={<PrivateRoute allowedRoles={['gestor', 'pcp', 'perito', 'cliente', 'montagem', 'qualidade', 'comercial']}><Layout><DataBook /></Layout></PrivateRoute>} />
+        <Route path="/dashboard" element={<PrivateRoute allowedRoles={['gestor', 'pcp', 'Programador']}><Layout><Dashboard /></Layout></PrivateRoute>} />
+        <Route path="/peritagens" element={<PrivateRoute allowedRoles={['gestor', 'pcp', 'perito', 'montagem', 'comercial', 'Programador']}><Layout><Peritagens /></Layout></PrivateRoute>} />
+        <Route path="/clientes" element={<PrivateRoute allowedRoles={['gestor', 'pcp', 'Programador']}><Layout><Clientes /></Layout></PrivateRoute>} />
+        <Route path="/manutencao" element={<PrivateRoute allowedRoles={['gestor', 'pcp', 'montagem', 'Programador']}><Layout><Manutencao /></Layout></PrivateRoute>} />
+        <Route path="/relatorios" element={<PrivateRoute allowedRoles={['gestor', 'pcp', 'Programador']}><Layout><Relatorios /></Layout></PrivateRoute>} />
+        <Route path="/registro-fotos" element={<PrivateRoute allowedRoles={['gestor', 'pcp', 'perito', 'montagem', 'qualidade', 'comercial', 'Programador']}><Layout><RegistroFotos /></Layout></PrivateRoute>} />
+        <Route path="/workflow" element={<PrivateRoute allowedRoles={['gestor', 'pcp', 'montagem', 'qualidade', 'Programador']}><Layout><WorkflowPage /></Layout></PrivateRoute>} />
+        <Route path="/nova-peritagem" element={<PrivateRoute allowedRoles={['gestor', 'pcp', 'perito', 'montagem', 'comercial', 'Programador']}><Layout><NovaPeritagem /></Layout></PrivateRoute>} />
+        <Route path="/databook" element={<PrivateRoute allowedRoles={['gestor', 'pcp', 'perito', 'cliente', 'montagem', 'qualidade', 'comercial', 'Programador']}><Layout><DataBook /></Layout></PrivateRoute>} />
 
         {/* Rota Exclusiva Cliente */}
         <Route path="/meus-relatorios" element={<PrivateRoute allowedRoles={['cliente']}><Layout><ClientPeritagens /></Layout></PrivateRoute>} />
 
         {/* Rotas de Fluxo PCP */}
-        <Route path="/pcp/aguardando" element={<PrivateRoute allowedRoles={['pcp', 'gestor', 'perito']}><Layout><AguardandoPeritagem /></Layout></PrivateRoute>} />
-        <Route path="/pcp/aprovar" element={<PrivateRoute allowedRoles={['pcp', 'gestor']}><Layout><PcpAprovaPeritagem /></Layout></PrivateRoute>} />
-        <Route path="/pcp/liberar" element={<PrivateRoute allowedRoles={['pcp', 'gestor', 'comercial']}><Layout><PcpLiberaPedido /></Layout></PrivateRoute>} />
-        <Route path="/pcp/finalizar" element={<PrivateRoute allowedRoles={['pcp', 'gestor', 'qualidade']}><Layout><PcpFinalizaProcesso /></Layout></PrivateRoute>} />
+        <Route path="/pcp/aguardando" element={<PrivateRoute allowedRoles={['pcp', 'gestor', 'perito', 'Programador']}><Layout><AguardandoPeritagem /></Layout></PrivateRoute>} />
+        <Route path="/pcp/aprovar" element={<PrivateRoute allowedRoles={['pcp', 'gestor', 'Programador']}><Layout><PcpAprovaPeritagem /></Layout></PrivateRoute>} />
+        <Route path="/pcp/liberar" element={<PrivateRoute allowedRoles={['pcp', 'gestor', 'comercial', 'Programador']}><Layout><PcpLiberaPedido /></Layout></PrivateRoute>} />
+        <Route path="/pcp/finalizar" element={<PrivateRoute allowedRoles={['pcp', 'gestor', 'qualidade', 'Programador']}><Layout><PcpFinalizaProcesso /></Layout></PrivateRoute>} />
 
         {/* Rota Exclusiva Gestor */}
         <Route path="/admin/usuarios" element={
-          <PrivateRoute allowedRoles={['gestor']}>
+          <PrivateRoute allowedRoles={['gestor', 'Programador']}>
             <Layout><AdminUsers /></Layout>
           </PrivateRoute>
         } />
         <Route path="/admin/empresas" element={
-          <PrivateRoute allowedRoles={['gestor']}>
+          <PrivateRoute allowedRoles={['gestor', 'Programador']}>
             <Layout><AdminEmpresas /></Layout>
           </PrivateRoute>
         } />

@@ -125,11 +125,11 @@ export const Dashboard: React.FC = () => {
                     status: (p.status || "").toUpperCase().trim()
                 }));
 
-                const emPeritagem = normalizedData.filter((p: any) => p.status === 'PERITAGEM CRIADA' || p.status === 'EM PERITAGEM').length;
-                const pendentePcp = normalizedData.filter((p: any) => p.status === 'AGUARDANDO APROVAÇÃO DO PCP' || p.status === 'PERITAGEM FINALIZADA').length;
-                const aguardandoCliente = normalizedData.filter((p: any) => p.status === 'AGUARDANDO APROVAÇÃO DO CLIENTE' || p.status === 'AGUARDANDO ORÇAMENTO' || p.status === 'ORÇAMENTO ENVIADO').length;
-                const manutencao = normalizedData.filter((p: any) => p.status === 'EM MANUTENÇÃO' || p.status === 'CILINDROS EM MANUTENÇÃO' || p.status === 'OS EM ABERTO').length;
-                const conferenciaFinal = normalizedData.filter((p: any) => p.status === 'AGUARDANDO CONFERÊNCIA FINAL').length;
+                const emPeritagem = normalizedData.filter((p: any) => p.status === 'PERITAGEM CRIADA' || p.status === 'EM PERITAGEM' || p.status === 'PERITAGEM EM ANDAMENTO').length;
+                const pendentePcp = normalizedData.filter((p: any) => p.status === 'AGUARDANDO APROVAÇÃO DO PCP' || p.status === 'PERITAGEM FINALIZADA' || p.status === 'REVISÃO NECESSÁRIA').length;
+                const aguardandoCliente = normalizedData.filter((p: any) => p.status === 'AGUARDANDO APROVAÇÃO DO CLIENTE' || p.status === 'AGUARDANDO ORÇAMENTO' || p.status === 'ORÇAMENTO ENVIADO' || p.status === 'AGUARDANDO CLIENTE').length;
+                const manutencao = normalizedData.filter((p: any) => p.status === 'EM MANUTENÇÃO' || p.status === 'CILINDROS EM MANUTENÇÃO' || p.status === 'OS EM ABERTO' || p.status === 'AGUARDANDO COMPRAS' || p.status === 'CILINDRO EM MANUTENÇÃO').length;
+                const conferenciaFinal = normalizedData.filter((p: any) => p.status === 'AGUARDANDO CONFERÊNCIA FINAL' || p.status === 'CONFERÊNCIA FINAL').length;
 
                 const finishedItems = normalizedData.filter((p: any) =>
                     ['PROCESSO FINALIZADO', 'FINALIZADO', 'FINALIZADOS', 'PROCESSO CONCLUÍDO', 'CONCLUÍDO', 'ORÇAMENTO FINALIZADO'].includes(p.status)

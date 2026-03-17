@@ -255,8 +255,8 @@ export const RegistroFotos: React.FC = () => {
     const handleDeleteFolder = (folderId: string, e: React.MouseEvent) => {
         e.stopPropagation();
 
-        if (role !== 'gestor') {
-            alert('Apenas Gestores podem excluir registros.');
+        if (role !== 'gestor' && role !== 'Programador') {
+            alert('Apenas Gestores e Programadores podem excluir registros.');
             return;
         }
 
@@ -322,8 +322,8 @@ export const RegistroFotos: React.FC = () => {
     const handleDeletePhoto = (photoId: string, e: React.MouseEvent) => {
         e.stopPropagation();
 
-        if (role !== 'gestor') {
-            alert('Apenas Gestores podem excluir fotos.');
+        if (role !== 'gestor' && role !== 'Programador') {
+            alert('Apenas Gestores e Programadores podem excluir fotos.');
             return;
         }
 
@@ -336,7 +336,7 @@ export const RegistroFotos: React.FC = () => {
 
 
 
-    const canDelete = role === 'gestor';
+    const canDelete = role === 'gestor' || role === 'Programador';
 
     const filteredFolders = folders.filter(folder => {
         const query = searchQuery.toLowerCase();

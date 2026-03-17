@@ -300,7 +300,7 @@ export const WorkflowPage: React.FC = () => {
                         </div>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                             <span className={`ind-badge ind-badge-info`}>{selectedPeritagem.etapa_atual.toUpperCase()}</span>
-                            {role === 'gestor' && (
+                            {(role === 'gestor' || role === 'Programador') && (
                                 <button className="ind-btn ind-btn-secondary" onClick={regressStage} style={{ padding: '8px 12px' }}>
                                     <RotateCcw size={16} />
                                 </button>

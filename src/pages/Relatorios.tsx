@@ -297,7 +297,7 @@ export const Relatorios: React.FC = () => {
                         return (
                             <div key={p.id} className="ind-card">
                                 <div className="ind-card-tag">
-                                    <span className="os-label">ID: {p.os_interna || 'P-TAG-00'}</span>
+                                    <span className="os-label">ID: {p.os_interna || p.numero_peritagem || 'S/OS'}</span>
                                     <span className={`ind-badge ${getStatusColorClass(p.status)}`} style={{fontSize: '0.6rem'}}>
                                         {displayStatus(p.status)}
                                     </span>

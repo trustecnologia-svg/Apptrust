@@ -37,7 +37,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen = false, onClose }) => 
     const [seenIds, setSeenIds] = useState<string[]>([]);
 
     useEffect(() => {
-        if (!['pcp', 'gestor', 'perito'].includes(role || '')) return;
+        if (!['pcp', 'gestor', 'perito', 'Programador'].includes(role || '')) return;
 
         // Carregar do storage
         const stored = localStorage.getItem('seenAguardandoIds');
@@ -103,7 +103,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen = false, onClose }) => 
 
             <nav className="sidebar-nav">
                 {/* ACESSO COMUM: Painel visível para PCP e Gestor, ou todos no WEB se não for cliente */}
-                {['gestor', 'pcp'].includes(role || '') && (
+                {['gestor', 'pcp', 'Programador'].includes(role || '') && (
                     <NavLink to="/dashboard" onClick={handleLinkClick} className={({ isActive }) => isActive ? 'nav-item active' : 'nav-item'}>
                         <LayoutDashboard size={20} />
                         <span>Painel</span>
@@ -257,8 +257,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen = false, onClose }) => 
                     </>
                 )}
 
-                {/* 7. GESTOR */}
-                {role === 'gestor' && (
+                {/* 7. GESTOR / PROGRAMADOR */}
+                {(role === 'gestor' || role === 'Programador') && (
                     <>
                         <NavLink to="/nova-peritagem" onClick={handleLinkClick} className={({ isActive }) => isActive ? 'nav-item active' : 'nav-item'}>
                             <PlusCircle size={20} />
